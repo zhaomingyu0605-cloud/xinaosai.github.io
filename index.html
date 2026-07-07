@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信奥赛C++ - 从入门到夺金</title>
+<style>
+/* ===== Reset & Base ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif;background:#f5f7fa;color:#333;line-height:1.7}
+
+/* ===== Theme Toggle ===== */
+:root{--bg:#f5f7fa;--card:#fff;--text:#333;--heading:#1a1a2e;--accent:#e94560;--accent2:#0f3460;--code-bg:#1e1e2e;--code-text:#cdd6f4;--border:#e2e8f0;--nav-bg:rgba(15,52,96,0.95);--nav-text:#fff;--tag-bg:#e94560;--tag-text:#fff;--footer-bg:#1a1a2e;--footer-text:#aab;--shadow:0 2px 12px rgba(0,0,0,0.08);--radius:12px}
+[data-theme="dark"]{--bg:#0d1117;--card:#161b22;--text:#c9d1d9;--heading:#f0f6fc;--accent:#ff7b72;--accent2:#58a6ff;--code-bg:#0d1117;--code-text:#c9d1d9;--border:#30363d;--nav-bg:rgba(22,27,34,0.97);--nav-text:#c9d1d9;--tag-bg:#ff7b72;--tag-text:#0d1117;--footer-bg:#161b22;--footer-text:#8b949e;--shadow:0 2px 12px rgba(0,0,0,0.3)}
+
+/* ===== Navbar ===== */
+nav{position:fixed;top:0;width:100%;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 8px rgba(0,0,0,0.15)}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:1.2rem;text-decoration:none}
+.nav-brand svg{width:28px;height:28px}
+.nav-links{display:flex;gap:8px;list-style:none;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+.nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.88rem;transition:.2s}
+.nav-links a:hover{background:rgba(255,255,255,0.12);color:#fff}
+.theme-btn{background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.9rem;transition:.2s}
+.theme-btn:hover{background:rgba(255,255,255,0.15)}
+
+/* ===== Hero ===== */
+.hero{background:linear-gradient(135deg,#0f3460 0%,#1a1a2e 50%,#16213e 100%);color:#fff;padding:100px 20px 70px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(233,69,96,0.15),transparent 50%)}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem);margin-bottom:12px;position:relative}
+.hero p{font-size:clamp(1rem,2.5vw,1.2rem);opacity:.85;max-width:650px;margin:0 auto 30px;position:relative}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 30px;border-radius:10px;font-weight:600;text-decoration:none;transition:.25s;font-size:1rem}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(233,69,96,0.4)}
+.btn-outline{border:2px solid rgba(255,255,255,0.6);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:#fff}
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:40px;position:relative;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:2rem;font-weight:800;color:var(--accent)}
+.hero-stat .label{font-size:.85rem;opacity:.7;margin-top:2px}
+
+/* ===== Container ===== */
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+
+/* ===== Section ===== */
+section{padding:60px 0}
+.section-title{font-size:clamp(1.4rem,3vw,1.8rem);color:var(--heading);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text);opacity:.7;margin-bottom:30px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:.25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
+
+/* ===== Grid ===== */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+
+/* ===== Syllabus ===== */
+.syllabus-list{list-style:none}
+.syllabus-list li{padding:14px 18px;border-left:3px solid var(--accent);background:var(--card);margin-bottom:10px;border-radius:0 var(--radius) var(--radius) 0;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}
+.syllabus-list li:hover{transform:translateX(6px);border-left-color:var(--accent2)}
+.syllabus-list .badge{background:var(--accent);color:var(--tag-text);padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;white-space:nowrap}
+
+/* ===== Code ===== */
+.code-block{background:var(--code-bg);color:var(--code-text);border-radius:8px;padding:18px;overflow-x:auto;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:.9rem;line-height:1.6;position:relative;margin:15px 0}
+.code-block .copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75rem;transition:.2s}
+.code-block .copy-btn:hover{background:rgba(255,255,255,0.25)}
+
+/* ===== Accordion ===== */
+.accordion{margin-bottom:12px}
+.accordion-header{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--heading);transition:.2s}
+.accordion-header:hover{background:var(--border)}
+.accordion-header .arrow{transition:.3s;font-size:.85rem}
+.accordion.open .accordion-header{border-radius:var(--radius) var(--radius) 0 0}
+.accordion.open .accordion-header .arrow{transform:rotate(180deg)}
+.accordion-body{background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.accordion.open .accordion-body{max-height:2000px;padding:16px 20px}
+.accordion-body p,.accordion-body .code-block{margin-bottom:10px}
+
+/* ===== Quiz ===== */
+.quiz-option{display:block;padding:12px 18px;margin-bottom:8px;background:var(--card);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:.2s}
+.quiz-option:hover{border-color:var(--accent2)}
+.quiz-option.correct{border-color:#2ea043;background:rgba(46,160,67,0.1)}
+.quiz-option.wrong{border-color:var(--accent);background:rgba(233,69,96,0.1)}
+.quiz-option input{display:none}
+.quiz-result{margin-top:10px;padding:10px 16px;border-radius:8px;font-weight:600;display:none}
+.quiz-result.show{display:block}
+.quiz-result.pass{background:rgba(46,160,67,0.12);color:#2ea043;border:1px solid rgba(46,160,67,0.3)}
+.quiz-result.fail{background:rgba(233,69,96,0.12);color:#e94560;border:1px solid rgba(233,69,96,0.3)}
+.quiz-btn{background:var(--accent2);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s;font-size:.95rem}
+.quiz-btn:hover{opacity:.85}
+
+/* ===== Progress Tracker ===== */
+.progress-card{text-align:center;padding:30px}
+.progress-ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,var(--border) 0deg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+.progress-ring-inner{width:90px;height:90px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--accent)}
+.progress-topics{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.progress-topic{background:var(--border);padding:4px 14px;border-radius:20px;font-size:.85rem;cursor:pointer;transition:.2s}
+.progress-topic.done{background:var(--accent);color:var(--tag-text)}
+.progress-topic:hover{opacity:.8}
+
+/* ===== Online Compiler ===== */
+.compiler-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.compiler-tab{display:flex;background:var(--code-bg);padding:8px 14px;gap:10px;align-items:center}
+.compiler-tab span{color:var(--code-text);font-size:.85rem;font-weight:600}
+.compiler-tab .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.compiler-tab .dot.red{background:#ff5f56}
+.compiler-tab .dot.yellow{background:#ffbd2e}
+.compiler-tab .dot.green{background:#27c93f}
+.compiler-wrap textarea{width:100%;min-height:220px;background:var(--code-bg);color:var(--code-text);border:none;padding:16px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:.9rem;resize:vertical;line-height:1.5}
+.compiler-wrap textarea:focus{outline:none}
+.compiler-output{background:#0d1117;color:#c9d1d9;padding:14px 16px;min-height:80px;font-family:monospace;font-size:.85rem;white-space:pre-wrap;border-top:1px solid var(--border)}
+.compiler-actions{display:flex;gap:10px;padding:12px 16px;background:var(--card);border-top:1px solid var(--border);flex-wrap:wrap}
+.compiler-actions button{background:var(--accent2);color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-weight:600;transition:.2s}
+.compiler-actions button:hover{opacity:.85}
+.compiler-actions .reset-btn{background:var(--border);color:var(--text)}
+
+/* ===== Footer ===== */
+footer{background:var(--footer-bg);color:var(--footer-text);padding:40px 20px;text-align:center;font-size:.9rem}
+footer a{color:var(--accent2);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ===== Back to Top ===== */
+#backToTop{position:fixed;bottom:30px;right:30px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:1.2rem;box-shadow:0 4px 12px rgba(233,69,96,0.4);display:none;transition:.3s;z-index:999}
+#backToTop:hover{transform:translateY(-3px)}
+
+/* ===== Tag ===== */
+.tag{display:inline-block;background:var(--tag-bg);color:var(--tag-text);padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.tag.blue{background:var(--accent2);color:#fff}
+
+/* ===== Search ===== */
+.search-bar{width:100%;max-width:500px;padding:12px 18px;border:2px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:1rem;transition:.2s}
+.search-bar:focus{outline:none;border-color:var(--accent2)}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
+  nav{padding:0 12px}
+  .nav-links a{padding:4px 10px;font-size:.82rem}
+  .hero{padding:80px 16px 50px}
+  .hero-stats{gap:20px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  section{padding:40px 0}
+  #backToTop{bottom:16px;right:16px}
+  .progress-ring{width:100px;height:100px}
+  .progress-ring-inner{width:76px;height:76px;font-size:1.3rem}
+}
+
+/* ===== Animations ===== */
+.fade-in{animation:fadeIn .6s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== Misc ===== */
+.highlight{background:rgba(233,69,96,0.08);border-left:3px solid var(--accent);padding:10px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.93rem}
+.empty-state{text-align:center;padding:40px;color:var(--text);opacity:.5}
+.katex-placeholder{background:var(--code-bg);padding:2px 8px;border-radius:4px;font-style:italic;color:var(--code-text);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav>
+  <a href="#" class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    信奥赛C++
+  </a>
+  <ul class="nav-links">
+    <li><a href="#syllabus">学习路线</a></li>
+    <li><a href="#basics">基础</a></li>
+    <li><a href="#algo">算法</a></li>
+    <li><a href="#compiler">在线编译</a></li>
+    <li><a href="#quiz">刷题</a></li>
+    <li><a href="#progress">进度</a></li>
+  </ul>
+  <button class="theme-btn" onclick="toggleTheme()" title="切换暗色/亮色模式">🌓</button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <h1>🏆 信奥赛 C++ 学习站</h1>
+  <p>从零到金牌选手 · 系统掌握 C++ 与算法竞赛知识 · 免费·开源·随时随地学习</p>
+  <div class="hero-btns">
+    <a href="#syllabus" class="btn btn-primary">📚 开始学习</a>
+    <a href="#compiler" class="btn btn-outline">▶ 在线编译</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num" id="topicCount">0</div><div class="label">知识点</div></div>
+    <div class="hero-stat"><div class="num" id="quizCount">0</div><div class="label">练习题</div></div>
+    <div class="hero-stat"><div class="num" id="codeLines">0</div><div class="label">代码示例</div></div>
+  </div>
+</section>
+
+<!-- ===== SEARCH ===== -->
+<section style="padding:30px 0;text-align:center">
+  <div class="container">
+    <input class="search-bar" type="text" id="searchInput" placeholder="🔍 搜索知识点、函数、算法…" oninput="filterContent(this.value)">
+  </div>
+</section>
+
+<!-- ===== SYLLABUS ===== -->
+<section id="syllabus">
+  <div class="container">
+    <h2 class="section-title">📖 学习路线图</h2>
+    <p class="section-desc">按阶段规划，循序渐进。点击章节可标记已完成。</p>
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="color:var(--heading);margin-bottom:12px">🌱 第一阶段：入门</h3>
+          <ul class="syllabus-list" id="syllabusList"></ul>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="color:var(--heading);margin-bottom:12px">⚡ 第二阶段：进阶</h3>
+          <ul class="syllabus-list" id="syllabusList2"></ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--heading);margin-bottom:12px">🔥 第三阶段：竞赛专题</h3>
+          <ul class="syllabus-list" id="syllabusList3"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BASICS ===== -->
+<section id="basics" style="background:var(--card)">
+  <div class="container">
+    <h2 class="section-title">💻 C++ 基础知识</h2>
+    <p class="section-desc">核心语法、STL、输入输出——信奥赛必备基础。</p>
+    <div id="basicsAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== ALGORITHMS ===== -->
+<section id="algo">
+  <div class="container">
+    <h2 class="section-title">🧠 算法 & 数据结构</h2>
+    <p class="section-desc">信奥赛高频考点，从排序到动态规划，一网打尽。</p>
+    <div id="algoAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== COMPILER ===== -->
+<section id="compiler" style="background:var(--card)">
+  <div class="container">
+    <h2 class="section-title">⚙️ 在线 C++ 编译器</h2>
+    <p class="section-desc">写代码并实时运行（模拟输出展示参考结果）。适合快速测试想法。</p>
+    <div class="compiler-wrap">
+      <div class="compiler-tab">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span style="margin-left:8px">main.cpp</span>
+      </div>
+      <textarea id="compilerCode" spellcheck="false">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    // 信奥赛经典：Hello World
+    cout &lt;&lt; "Hello, 信奥赛！" &lt;&lt; endl;
+
+    // 求 1 到 100 的和
+    int sum = 0;
+    for (int i = 1; i &lt;= 100; i++) {
+        sum += i;
+    }
+    cout &lt;&lt; "1+2+...+100 = " &lt;&lt; sum &lt;&lt; endl;
+    return 0;
+}</textarea>
+      <div class="compiler-output" id="compilerOutput">// 点击「运行」查看模拟输出结果</div>
+      <div class="compiler-actions">
+        <button onclick="runCode()">▶ 运行</button>
+        <button class="reset-btn" onclick="resetCode()">↺ 重置</button>
+        <button class="reset-btn" onclick="loadTemplate('sort')">📥 排序模板</button>
+        <button class="reset-btn" onclick="loadTemplate('dp')">📥 DP模板</button>
+        <button class="reset-btn" onclick="loadTemplate('graph')">📥 图模板</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUIZ ===== -->
+<section id="quiz">
+  <div class="container">
+    <h2 class="section-title">📝 刷题练习</h2>
+    <p class="section-desc">选择题、填空题，检验你的掌握程度。</p>
+    <div id="quizArea"></div>
+  </div>
+</section>
+
+<!-- ===== PROGRESS ===== -->
+<section id="progress" style="background:var(--card)">
+  <div class="container">
+    <h2 class="section-title">📊 学习进度</h2>
+    <p class="section-desc">你的学习记录保存在本地浏览器中，不会丢失。</p>
+    <div class="grid-2">
+      <div class="progress-card card">
+        <div class="progress-ring" id="progressRing">
+          <div class="progress-ring-inner" id="progressPercent">0%</div>
+        </div>
+        <p style="color:var(--text);font-weight:600">总体完成度</p>
+        <button class="quiz-btn" onclick="resetProgress()" style="background:var(--border);color:var(--text);margin-top:10px">🔄 重置进度</button>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--heading);margin-bottom:10px">完成的知识点</h3>
+        <div class="progress-topics" id="progressTopics">
+          <div class="empty-state">还没有完成任何知识点，加油！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>🦐 信奥赛C++学习站 · 免费 · 开源</p>
+  <p style="margin-top:8px;font-size:.82rem">
+    基于纯前端构建 · 数据存储在本地浏览器中 ·
+    <a href="https://github.com/zhaomingyu0605-cloud/xinaosai.github.io" target="_blank">GitHub 源码</a>
+  </p>
+</footer>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ============================================================
+//  DATA
+// ============================================================
+
+const syllabusData = [
+  // 第一阶段
+  { phase:1, topics:[
+    { name:'C++ 环境搭建与 Hello World', badge:'入门', id:'s-env' },
+    { name:'变量、数据类型与输入输出', badge:'入门', id:'s-var' },
+    { name:'运算符与表达式', badge:'基础', id:'s-op' },
+    { name:'条件判断 (if/switch)', badge:'基础', id:'s-if' },
+    { name:'循环 (for/while/do-while)', badge:'基础', id:'s-loop' },
+    { name:'数组与字符串', badge:'基础', id:'s-array' },
+  ]},
+  // 第二阶段
+  { phase:2, topics:[
+    { name:'函数与递归', badge:'进阶', id:'s-func' },
+    { name:'指针与引用', badge:'进阶', id:'s-ptr' },
+    { name:'结构体与类', badge:'进阶', id:'s-struct' },
+    { name:'STL 容器 (vector/map/set)', badge:'进阶', id:'s-stl' },
+    { name:'算法头文件 (sort/next_permutation)', badge:'进阶', id:'s-algo' },
+    { name:'文件读写与重定向', badge:'进阶', id:'s-file' },
+  ]},
+  // 第三阶段
+  { phase:3, topics:[
+    { name:'贪心算法', badge:'竞赛', id:'s-greedy' },
+    { name:'二分查找与二分答案', badge:'竞赛', id:'s-binary' },
+    { name:'深度优先搜索 (DFS)', badge:'竞赛', id:'s-dfs' },
+    { name:'广度优先搜索 (BFS)', badge:'竞赛', id:'s-bfs' },
+    { name:'动态规划入门', badge:'竞赛', id:'s-dp' },
+    { name:'图论基础与最短路', badge:'竞赛', id:'s-graph' },
+    { name:'数论基础 (gcd/质数/模运算)', badge:'竞赛', id:'s-math' },
+    { name:'并查集与最小生成树', badge:'竞赛', id:'s-ufs' },
+    { name:'线段树基础', badge:'竞赛', id:'s-segtree' },
+    { name:'ST 表与 RMQ', badge:'竞赛', id:'s-rmq' },
+  ]}
+];
+
+const basicsData = [
+  {
+    title:'📌 头文件与命名空间',
+    content:`<p>信奥赛最常用的万能头文件：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    // 你的代码
+    return 0;
+}</pre></div>
+<p>✨ <strong>注意：</strong>正式比赛中使用 <code>bits/stdc++.h</code> 方便快捷，但大型工程建议按需引入具体头文件。</p>`
+  },
+  {
+    title:'📌 变量与数据类型',
+    content:`<p>C++ 常用数据类型一览：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>int a = 10;            // 整型 (32位，约 ±21亿)
+long long b = 1e18;    // 长整型 (64位)
+float c = 3.14f;       // 单精度浮点
+double d = 3.1415926;  // 双精度浮点（更推荐）
+char ch = 'A';         // 字符
+bool flag = true;      // 布尔
+string s = "Hello";    // 字符串（需要 #include &lt;string&gt;）</pre></div>
+<p>💡 <strong>信奥赛提示：</strong>涉及大数运算时，优先使用 <code>long long</code> 而不是 <code>int</code>，避免溢出。</p>`
+  },
+  {
+    title:'📌 输入输出优化',
+    content:`<p>信奥赛比赛必备——快速 I/O：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>// 关闭同步，加速 cin/cout
+ios::sync_with_stdio(false);
+cin.tie(nullptr);
+cout.tie(nullptr);
+
+int n; cin >> n;
+cout << n << '\\n';
+
+// 或使用 scanf/printf（同样高效）
+int m; scanf("%d", &m);
+printf("%d\\n", m);</pre></div>
+<div class="highlight">⚠️ 在数据量大的题目（&gt;10⁵），<strong>必须</strong>使用输入输出优化，否则可能超时！</div>`
+  },
+  {
+    title:'📌 STL 容器速查',
+    content:`<p>信奥赛高频容器：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>vector&lt;int&gt; v = {1,2,3};        // 动态数组
+v.push_back(4);                  // 尾部插入
+sort(v.begin(), v.end());        // 排序
+
+map&lt;string,int&gt; mp;              // 键值对
+mp["apple"] = 5;
+cout &lt;&lt; mp["apple"];             // 5
+
+set&lt;int&gt; st;                     // 有序集合（去重）
+st.insert(3); st.insert(1);
+
+stack&lt;int&gt; stk;                  // 栈
+queue&lt;int&gt; q;                    // 队列
+priority_queue&lt;int&gt; pq;          // 优先队列（大根堆）</pre></div>
+<p>💡 熟练使用 STL 能大幅提升编码速度和正确率。</p>`
+  }
+];
+
+const algoData = [
+  {
+    title:'📌 排序与查找',
+    content:`<p>快速排序和二分查找是信奥赛基本功：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; a = {5, 2, 8, 1, 9};
+
+    // 排序 O(n log n)
+    sort(a.begin(), a.end());
+
+    // 二分查找 O(log n)
+    bool found = binary_search(a.begin(), a.end(), 8);
+
+    // 查找第一个 ≥ x 的位置
+    auto it = lower_bound(a.begin(), a.end(), 5);
+    cout &lt;&lt; "第一个 ≥5 的位置：" &lt;&lt; (it - a.begin()) &lt;&lt; endl;
+    return 0;
+}</pre></div>`
+  },
+  {
+    title:'📌 深度优先搜索 (DFS)',
+    content:`<p>DFS 是竞赛最基础也最重要的算法之一：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>// 全排列模板
+int n = 3, vis[10], ans[10];
+
+void dfs(int k) {
+    if (k > n) {
+        for (int i = 1; i <= n; i++)
+            cout &lt;&lt; ans[i] &lt;&lt; " \\n"[i==n];
+        return;
+    }
+    for (int i = 1; i <= n; i++) {
+        if (!vis[i]) {
+            vis[i] = 1;
+            ans[k] = i;
+            dfs(k + 1);
+            vis[i] = 0;  // 回溯
+        }
+    }
+}
+// 调用 dfs(1)</pre></div>
+<p>🧠 关键：<strong>回溯</strong>是 DFS 的灵魂，别忘了恢复状态！</p>`
+  },
+  {
+    title:'📌 动态规划 (DP)',
+    content:`<p>信奥赛重中之重！以 01 背包为例：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>// 01背包：n件物品，容量m
+int n = 4, m = 10;
+int w[] = {0, 2, 3, 4, 7};  // 重量
+int v[] = {0, 1, 3, 5, 9};  // 价值
+int dp[1005] = {0};
+
+for (int i = 1; i <= n; i++)
+    for (int j = m; j >= w[i]; j--)
+        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
+
+cout &lt;&lt; "最大价值：" &lt;&lt; dp[m] &lt;&lt; endl;</pre></div>
+<div class="highlight">⭐ 掌握 <strong>01背包、完全背包、最长上升子序列 (LIS)、最长公共子序列 (LCS)</strong> 是夺金必经之路。</div>`
+  },
+  {
+    title:'📌 图论——最短路',
+    content:`<p>Dijkstra 算法（单源最短路，非负权）：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>using PII = pair&lt;int,int&gt;;
+vector&lt;PII&gt; g[100005];
+int dist[100005];
+
+void dijkstra(int s) {
+    memset(dist, 0x3f, sizeof(dist));
+    dist[s] = 0;
+    priority_queue&lt;PII,vector&lt;PII&gt;,greater&lt;PII&gt;&gt; pq;
+    pq.push({0, s});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d != dist[u]) continue;
+        for (auto [v, w] : g[u]) {
+            if (dist[v] > dist[u] + w) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+}</pre></div>
+<p>💡 熟练使用 <code>pair</code> 和 <code>priority_queue</code> 来优化 Dijkstra。</p>`
+  },
+  {
+    title:'📌 数论——gcd & 快速幂',
+    content:`<p>竞赛必备数论模板：</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre>// 最大公约数 (欧几里得)
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+// 快速幂 O(log n)
+long long qpow(long long a, long long b, long long mod) {
+    long long res = 1;
+    while (b) {
+        if (b & 1) res = res * a % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return res;
+}</pre></div>`
+  }
+];
+
+const quizData = [
+  {
+    q:'在 C++ 中，以下哪个头文件最常在信奥赛中使用？',
+    options:['<iostream>','<stdio.h>','<bits/stdc++.h>','<cstdlib>'],
+    answer:2, explain:'bits/stdc++.h 是万能头文件，包含所有标准库，信奥赛中最常用。'
+  },
+  {
+    q:'int 类型的变量在 32 位系统上能表示的最大值大约是多少？',
+    options:['2³¹-1 ≈ 21亿','2³²-1 ≈ 43亿','2¹⁶-1 ≈ 6.5万','2⁶⁴-1'],
+    answer:0, explain:'int 占 32 位，最高位为符号位，范围 -2³¹ ~ 2³¹-1。'
+  },
+  {
+    q:'关于 DFS（深度优先搜索），以下说法正确的是？',
+    options:['使用队列实现','必须使用递归','需要回溯恢复状态','只能用于树结构'],
+    answer:2, explain:'DFS 通常用递归实现，关键是在递归返回后恢复状态（回溯）。'
+  },
+  {
+    q:'使用 cin/cout 时，想加速输入输出应该怎么做？',
+    options:['用 printf 代替 cin','关闭同步流','多写几行 using namespace','以上都是'],
+    answer:1, explain:'ios::sync_with_stdio(false) 关闭 C++ 与 C 的同步，加速 cin/cout。'
+  },
+  {
+    q:'对于 01 背包问题，内层循环应如何遍历容量？',
+    options:['从小到大','从大到小','都可以','用递归'],
+    answer:1, explain:'01背包内层从大到小遍历，保证每个物品只取一次。'
+  },
+  {
+    q:'以下哪个 STL 容器内部实现是红黑树？',
+    options:['vector','unordered_map','set','deque'],
+    answer:2, explain:'set 和 map 内部通常用红黑树实现，保证有序。'
+  },
+  {
+    q:'下列哪个不是 C++ 关键字？',
+    options:['const','static','printf','virtual'],
+    answer:2, explain:'printf 是函数名，不是 C++ 关键字（在 stdio.h 中定义）。'
+  },
+  {
+    q:'使用 lower_bound 函数的前提是什么？',
+    options:['数组必须逆序','序列必须有序','元素必须唯一','必须用 vector'],
+    answer:1, explain:'lower_bound 二分查找要求序列有序。'
+  }
+];
+
+const codeTemplates = {
+  sort:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // 快速排序 + 去重
+    vector<int> a = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+    
+    sort(a.begin(), a.end());
+    a.erase(unique(a.begin(), a.end()), a.end());
+    
+    cout << "排序去重后:";
+    for (int x : a) cout << " " << x;
+    cout << endl;
+    return 0;
+}`,
+  dp:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // 最长上升子序列 (LIS)
+    vector<int> a = {10, 9, 2, 5, 3, 7, 101, 18};
+    vector<int> dp;
+    
+    for (int x : a) {
+        auto it = lower_bound(dp.begin(), dp.end(), x);
+        if (it == dp.end()) dp.push_back(x);
+        else *it = x;
+    }
+    
+    cout << "LIS长度: " << dp.size() << endl;
+    return 0;
+}`,
+  graph:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // 邻接表存图
+    int n = 5;
+    vector<vector<int>> g(n + 1);
+    
+    // 添加边
+    g[1].push_back(2);
+    g[1].push_back(3);
+    g[2].push_back(4);
+    g[3].push_back(5);
+    
+    vector<int> dist(n + 1, -1);
+    queue<int> q;
+    q.push(1);
+    dist[1] = 0;
+    
+    // BFS 求最短路
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : g[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+    
+    for (int i = 1; i <= n; i++)
+        cout << "1到" << i << "距离: " << dist[i] << endl;
+    return 0;
+}`
+};
+
+// ============================================================
+//  APP STATE
+// ============================================================
+
+let state = {
+  theme: localStorage.getItem('xinaosai-theme') || 'light',
+  doneTopics: JSON.parse(localStorage.getItem('xinaosai-done') || '[]'),
+  quizAnswered: JSON.parse(localStorage.getItem('xinaosai-quiz') || '{}'),
+};
+
+// ============================================================
+//  THEME
+// ============================================================
+
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  localStorage.setItem('xinaosai-theme', state.theme);
+}
+
+// init theme
+if (state.theme === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+// ============================================================
+//  SYLLABUS
+// ============================================================
+
+function renderSyllabus() {
+  const lists = [
+    document.getElementById('syllabusList'),
+    document.getElementById('syllabusList2'),
+    document.getElementById('syllabusList3')
+  ];
+
+  syllabusData.forEach((phase, pi) => {
+    const ul = lists[pi];
+    if (!ul) return;
+    ul.innerHTML = phase.topics.map(t => `
+      <li onclick="toggleTopic('${t.id}')" data-id="${t.id}">
+        <span style="flex:1">${t.name}</span>
+        <span class="badge">${t.badge}</span>
+        <span style="font-size:.8rem;opacity:.6">${state.doneTopics.includes(t.id) ? '✅' : '○'}</span>
+      </li>
+    `).join('');
+  });
+}
+
+function toggleTopic(id) {
+  const idx = state.doneTopics.indexOf(id);
+  if (idx === -1) state.doneTopics.push(id);
+  else state.doneTopics.splice(idx, 1);
+  localStorage.setItem('xinaosai-done', JSON.stringify(state.doneTopics));
+  renderSyllabus();
+  renderProgress();
+  // 给一个点击反馈
+  const li = document.querySelector(`[data-id="${id}"]`);
+  if (li) {
+    li.style.transform = 'scale(0.98)';
+    setTimeout(() => li.style.transform = '', 150);
+  }
+}
+
+// ============================================================
+//  ACCORDIONS
+// ============================================================
+
+function renderAccordions(containerId, data) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = data.map((item, i) => `
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        ${item.title}
+        <span class="arrow">▾</span>
+      </div>
+      <div class="accordion-body">${item.content}</div>
+    </div>
+  `).join('');
+  // 默认打开第一个
+  if (data.length > 0) {
+    const first = container.querySelector('.accordion');
+    if (first) first.classList.add('open');
+  }
+}
+
+function toggleAccordion(header) {
+  const acc = header.parentElement;
+  acc.classList.toggle('open');
+}
+
+// ============================================================
+//  COMPILER
+// ============================================================
+
+const compilerOutputs = {
+  '#include <iostream>': `Hello, 信奥赛！
+1+2+...+100 = 5050`,
+  'sort': `排序去重后: 1 2 3 4 5 6 9`,
+  'dp': `LIS长度: 4`,
+  'graph': `1到1距离: 0
+1到2距离: 1
+1到3距离: 1
+1到4距离: 2
+1到5距离: 2`
+};
+
+function runCode() {
+  const code = document.getElementById('compilerCode').value;
+  const out = document.getElementById('compilerOutput');
+
+  // Try to match known outputs
+  let matched = false;
+  for (const [key, val] of Object.entries(compilerOutputs)) {
+    if (code.includes(key) || code.includes(key.replace('#', ''))) {
+      // Show "编译中" briefly then show output
+      out.textContent = '🔄 编译中...\n';
+      setTimeout(() => {
+        out.textContent = `✅ 编译成功，运行结果：\n${val}`;
+      }, 500);
+      matched = true;
+      break;
+    }
+  }
+  if (!matched) {
+    out.textContent = '⚠️ 这是一个模拟编译器，请选择一个内置模板来查看运行结果。\n你也可以编辑代码后点击运行，如果能匹配到已知输出就会显示。';
+  }
+}
+
+function resetCode() {
+  document.getElementById('compilerCode').value = document.querySelector('#compilerCode').defaultValue;
+  document.getElementById('compilerOutput').textContent = '// 点击「运行」查看模拟输出结果';
+}
+
+function loadTemplate(name) {
+  document.getElementById('compilerCode').value = codeTemplates[name];
+  document.getElementById('compilerOutput').textContent = '// 模板已加载，点击「运行」查看结果';
+}
+
+// ============================================================
+//  QUIZ
+// ============================================================
+
+let currentQuiz = 0;
+let quizScore = 0;
+
+function renderQuiz() {
+  const area = document.getElementById('quizArea');
+  const total = quizData.length;
+  const answered = state.quizAnswered;
+
+  let html = '';
+  quizData.forEach((item, i) => {
+    const sel = answered[i];
+    html += `<div class="card" style="margin-bottom:16px" data-quiz="${i}">
+      <p style="font-weight:600;margin-bottom:12px;color:var(--heading)">
+        Q${i+1}. ${item.q}
+      </p>`;
+    item.options.forEach((opt, oi) => {
+      const cls = sel !== undefined ? (oi === item.answer ? 'correct' : (oi === sel ? 'wrong' : '')) : '';
+      html += `<label class="quiz-option ${cls}">
+        <input type="radio" name="q${i}" value="${oi}" ${sel !== undefined ? 'disabled' : ''}
+          onchange="submitQuiz(${i}, ${oi})">
+        ${opt}
+      </label>`;
+    });
+    if (sel !== undefined) {
+      html += `<div class="quiz-result show ${sel === item.answer ? 'pass' : 'fail'}">
+        ${sel === item.answer ? '✅ 正确！' : '❌ 错误。'}
+        ${item.explain}
+      </div>`;
+    }
+    html += '</div>';
+  });
+
+  // Score summary
+  const correctCount = Object.entries(answered).filter(([k,v]) => quizData[parseInt(k)]?.answer === v).length;
+  const answeredCount = Object.keys(answered).length;
+
+  html += `<div class="card" style="text-align:center">
+    <h3 style="color:var(--heading)">📊 答题统计</h3>
+    <p style="margin:8px 0;font-size:1.2rem">
+      <strong style="color:var(--accent)">${correctCount}</strong> / ${total} 正确
+      （已答 ${answeredCount} 题）
+    </p>
+    ${answeredCount === total ? `<p style="color:#2ea043;font-weight:600">🎉 全部完成！你太棒了！</p>` : ''}
+    <button class="quiz-btn" onclick="resetQuiz()" style="background:var(--border);color:var(--text);margin-top:8px">🔄 重置所有题目</button>
+  </div>`;
+
+  area.innerHTML = html;
+  updateHeroStats();
+}
+
+function submitQuiz(qIdx, optIdx) {
+  state.quizAnswered[qIdx] = optIdx;
+  localStorage.setItem('xinaosai-quiz', JSON.stringify(state.quizAnswered));
+  renderQuiz();
+}
+
+function resetQuiz() {
+  if (!confirm('确定要重置所有答题记录吗？')) return;
+  state.quizAnswered = {};
+  localStorage.removeItem('xinaosai-quiz');
+  renderQuiz();
+}
+
+// ============================================================
+//  PROGRESS
+// ============================================================
+
+function renderProgress() {
+  const totalTopics = syllabusData.reduce((sum, p) => sum + p.topics.length, 0);
+  const done = state.doneTopics.length;
+  const pct = totalTopics > 0 ? Math.round(done / totalTopics * 100) : 0;
+
+  // Ring
+  const ring = document.getElementById('progressRing');
+  const degrees = pct * 3.6;
+  ring.style.background = `conic-gradient(var(--accent) ${degrees}deg, var(--border) ${degrees}deg)`;
+  document.getElementById('progressPercent').textContent = `${pct}%`;
+
+  // Topic list
+  const container = document.getElementById('progressTopics');
+  const allTopics = syllabusData.flatMap(p => p.topics);
+  if (done === 0) {
+    container.innerHTML = '<div class="empty-state">还没有完成任何知识点，加油！</div>';
+  } else {
+    container.innerHTML = allTopics.map(t => `
+      <span class="progress-topic ${state.doneTopics.includes(t.id) ? 'done' : ''}" title="${t.name}">
+        ${state.doneTopics.includes(t.id) ? '✅ ' : ''}${t.name}
+      </span>
+    `).join('');
+  }
+}
+
+function resetProgress() {
+  if (!confirm('确定要重置所有学习进度吗？')) return;
+  state.doneTopics = [];
+  localStorage.setItem('xinaosai-done', JSON.stringify(state.doneTopics));
+  renderSyllabus();
+  renderProgress();
+}
+
+// ============================================================
+//  SEARCH
+// ============================================================
+
+function filterContent(value) {
+  const q = value.toLowerCase().trim();
+  // Accordion filter
+  document.querySelectorAll('.accordion').forEach(acc => {
+    const text = acc.textContent.toLowerCase();
+    acc.style.display = (q === '' || text.includes(q)) ? '' : 'none';
+  });
+  // Section highlighting
+  document.querySelectorAll('section').forEach(sec => {
+    if (q === '') { sec.style.display = ''; return; }
+    const text = sec.textContent.toLowerCase();
+    sec.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// ============================================================
+//  HERO STATS
+// ============================================================
+
+function updateHeroStats() {
+  const totalTopics = syllabusData.reduce((sum, p) => sum + p.topics.length, 0);
+  document.getElementById('topicCount').textContent = totalTopics;
+  document.getElementById('quizCount').textContent = quizData.length;
+  document.getElementById('codeLines').innerHTML = (basicsData.length + algoData.length).toString();
+}
+
+// ============================================================
+//  BACK TO TOP
+// ============================================================
+
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  btn.style.display = window.scrollY > 300 ? 'block' : 'none';
+});
+
+// ============================================================
+//  COPY CODE
+// ============================================================
+
+function copyCode(btn) {
+  const pre = btn.parentElement.querySelector('pre');
+  if (!pre) return;
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制 ✓';
+    setTimeout(() => btn.textContent = '复制', 1500);
+  });
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+
+renderSyllabus();
+renderAccordions('basicsAccordion', basicsData);
+renderAccordions('algoAccordion', algoData);
+renderQuiz();
+renderProgress();
+updateHeroStats();
+</script>
+</body>
+</html>
