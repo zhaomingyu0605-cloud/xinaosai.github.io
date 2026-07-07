@@ -787,6 +787,10 @@ function loadTemplate(name) {
 let currentQuiz = 0;
 let quizScore = 0;
 
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function renderQuiz() {
   const area = document.getElementById('quizArea');
   const total = quizData.length;
@@ -797,14 +801,14 @@ function renderQuiz() {
     const sel = answered[i];
     html += `<div class="card" style="margin-bottom:16px" data-quiz="${i}">
       <p style="font-weight:600;margin-bottom:12px;color:var(--heading)">
-        Q${i+1}. ${item.q}
+        Q${i+1}. ${escapeHtml(item.q)}
       </p>`;
     item.options.forEach((opt, oi) => {
       const cls = sel !== undefined ? (oi === item.answer ? 'correct' : (oi === sel ? 'wrong' : '')) : '';
       html += `<label class="quiz-option ${cls}">
         <input type="radio" name="q${i}" value="${oi}" ${sel !== undefined ? 'disabled' : ''}
           onchange="submitQuiz(${i}, ${oi})">
-        ${opt}
+        ${escapeHtml(opt)}
       </label>`;
     });
     if (sel !== undefined) {
