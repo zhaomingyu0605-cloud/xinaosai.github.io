@@ -151,6 +151,23 @@ footer a:hover{text-decoration:underline}
 /* ===== Misc ===== */
 .highlight{background:rgba(233,69,96,0.08);border-left:3px solid var(--accent);padding:10px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.93rem}
 .empty-state{text-align:center;padding:40px;color:var(--text);opacity:.5}
+.exam-filter-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s}
+.exam-filter-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.exam-card{border-left:4px solid var(--accent2);margin-bottom:14px}
+.exam-card .exam-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;flex-wrap:wrap;gap:8px}
+.exam-card .exam-title{font-weight:700;color:var(--heading);font-size:1rem}
+.exam-card .exam-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.8rem}
+.exam-card .exam-tag{background:var(--border);padding:2px 10px;border-radius:12px;font-size:.75rem}
+.exam-card .exam-tag.gold{background:rgba(255,215,0,0.15);color:#d4a800}
+.exam-card .exam-tag.blue{background:rgba(88,166,255,0.15);color:var(--accent2)}
+.exam-card .exam-tag.green{background:rgba(46,160,67,0.15);color:#2ea043}
+.exam-card .exam-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.exam-card.open .exam-body{display:block}
+.exam-card .exam-desc{color:var(--text);font-size:.92rem;line-height:1.7;margin-bottom:10px}
+.exam-card .exam-solution{background:rgba(233,69,96,0.06);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.88rem;margin-bottom:10px}
+.exam-card .exam-link{color:var(--accent2);text-decoration:none;font-size:.85rem}
+.exam-card .exam-link:hover{text-decoration:underline}
+.stars{color:gold;letter-spacing:2px;font-size:.85rem}
 .katex-placeholder{background:var(--code-bg);padding:2px 8px;border-radius:4px;font-style:italic;color:var(--code-text);font-size:.85rem}
 </style>
 </head>
@@ -168,6 +185,7 @@ footer a:hover{text-decoration:underline}
     <li><a href="#algo">算法</a></li>
     <li><a href="#compiler">在线编译</a></li>
     <li><a href="#quiz">刷题</a></li>
+    <li><a href="#exam">真题</a></li>
     <li><a href="#progress">进度</a></li>
     <li><a href="#donation">☕赞赏</a></li>
   </ul>
@@ -283,6 +301,21 @@ int main() {
     <h2 class="section-title">📝 刷题练习</h2>
     <p class="section-desc">选择题、填空题，检验你的掌握程度。</p>
     <div id="quizArea"></div>
+  </div>
+</section>
+
+<!-- ===== EXAMS ===== -->
+<section id="exam">
+  <div class="container">
+    <h2 class="section-title">🏛️ 往届 CSP / NOIP 真题</h2>
+    <p class="section-desc">历年真题精选，点击展开题目详情与解题思路。</p>
+    <div id="examFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      <button class="exam-filter-btn active" data-filter="all" onclick="filterExams('all')">全部</button>
+      <button class="exam-filter-btn" data-filter="CSP-J" onclick="filterExams('CSP-J')">CSP-J</button>
+      <button class="exam-filter-btn" data-filter="CSP-S" onclick="filterExams('CSP-S')">CSP-S</button>
+      <button class="exam-filter-btn" data-filter="NOIP" onclick="filterExams('NOIP')">NOIP</button>
+    </div>
+    <div id="examList"></div>
   </div>
 </section>
 
@@ -655,6 +688,67 @@ int main() {
 };
 
 // ============================================================
+//  EXAM DATA (CSP / NOIP 往届真题)
+// ============================================================
+
+const examData = [
+  // ── 2023 ──
+  { year:2023, exam:'CSP-J', name:'小苹果', pid:'P9748', diff:2, tags:['模拟','数学'],
+    desc:'有 n 个苹果排成一排，每天拿走第 1, 4, 7, ... 个（即从剩余的第一个开始，每隔两个拿一个）。问多少天能拿完所有苹果？编号为 n 的苹果在第几天被拿走？',
+    solution:'直接模拟每次取 ⌈剩余/3⌉ 个苹果。编号 n 的苹果被拿走的条件是当轮剩余数量中它的位置 mod 3 == 1。注意数据范围 n≤10⁹ 不能真模拟每颗苹果，但可以按轮次统计数量。' },
+  { year:2023, exam:'CSP-J', name:'公路', pid:'P9749', diff:3, tags:['贪心','模拟'],
+    desc:'一条笔直的公路上有 n 个站点，从站点 1 出发到站点 n。每升油可以走 d 公里。每个站点的油价不同。初始油箱为空，可以在任意站点加油。求到达终点的最小花费。',
+    solution:'经典贪心：维护当前经过站点中的最低油价，每次到站点时用当前最低价加油，只加到能到达下一个更低价站点的油量。本质上是把油留到最便宜的时候加。' },
+  { year:2023, exam:'CSP-J', name:'一元二次方程', pid:'P9750', diff:4, tags:['大模拟','数学'],
+    desc:'给定一元二次方程 ax²+bx+c=0，求最大实数根的分数形式（最简分数或整数）。需要考虑多种特殊情况（a=0, Δ<0, Δ=0 等）。',
+    solution:'大模拟题，按照题目规则逐步计算判别式 Δ=b²-4ac。注意分数的符号处理、约分、有理化等细节。比赛中最重要的是仔细阅读规则并严格实现。' },
+  { year:2023, exam:'CSP-S', name:'密码锁', pid:'P9751', diff:3, tags:['枚举','BFS'],
+    desc:'一个五位密码锁，每个数字 0-9，每次可以拨动一个数字（±1 循环）或相邻两个数字同时拨动。给定若干个错误状态，求有多少个可能的正确密码。',
+    solution:'枚举所有可能的正确密码（10⁵ 个），对每个检查是否与所有错误状态都恰好相差一次合法操作。检查时枚举 5+4=9 种操作方式即可。' },
+  { year:2023, exam:'CSP-S', name:'消消乐', pid:'P9752', diff:4, tags:['栈','计数'],
+    desc:'给定一个字符串，每次可以删除相邻两个相同字符。求所有可消空的子串数量。',
+    solution:'用栈模拟消除过程。关键是用哈希表记录每个位置对应的栈状态，通过相同状态的出现次数来计数可消空的子串。' },
+  { year:2023, exam:'NOIP', name:'词典', pid:'P9749', diff:3, tags:['字符串','排序'],
+    desc:'有 n 个单词，每个单词可以任意重新排列其字母。问是否存在一种排列方式，使得某个单词的字典序严格小于其他所有单词？',
+    solution:'将每个单词的字母排序：最小可能排列是字母升序，最大可能排列是字母降序。如果某个单词的升序排列小于其他所有单词的降序排列，则答案为 1，否则为 0。' },
+
+  // ── 2022 ──
+  { year:2022, exam:'CSP-J', name:'乘方', pid:'P8813', diff:1, tags:['模拟'],
+    desc:'计算 a^b 的值。如果结果超过 10⁹，输出 -1，否则输出结果。a,b 均为正整数 ≤10⁹。',
+    solution:'直接模拟乘法会超时或溢出。用快速幂或循环累乘，每次乘之前检查是否会超过 10⁹（如果用 long long 可以直接乘后判断）。注意特判 a=1 时可以直接输出 1。' },
+  { year:2022, exam:'CSP-J', name:'解密', pid:'P8814', diff:2, tags:['数学'],
+    desc:'给定 n = p×q, e×d = (p-1)(q-1)+1, 以及 n, e, d。求 p, q（p<q）。数据保证有唯一解。',
+    solution:'通过推导：p+q = n - e×d + 2, p×q = n。于是 p, q 是方程 x² - (n-ed+2)x + n = 0 的两个根。求解一元二次方程即可，注意用 long long 避免溢出。' },
+  { year:2022, exam:'CSP-J', name:'逻辑表达式', pid:'P8815', diff:4, tags:['栈','表达式求值'],
+    desc:'计算包含 |（或）和 &（与）的布尔表达式，支持短路求值（a&b 如果 a=0 则不计算 b）。输出表达式结果以及 & 和 | 的短路次数。',
+    solution:'用递归下降或栈实现表达式求值。短路求值时需要跳过不计算的部分。可以用两个计数器分别记录 & 短路（左操作数为 0）和 | 短路（左操作数为 1）的次数。' },
+  { year:2022, exam:'CSP-S', name:'假期计划', pid:'P8817', diff:4, tags:['图论','BFS','枚举'],
+    desc:'给定一个无向图，选择四个不同的景点 A,B,C,D（顺次访问），要求相邻景点间的最短路径经过的边数 ≤ k。求最大兴趣值之和。',
+    solution:'先 BFS 求出全源最短路。然后对每个节点预处理出满足条件的前三大景点。最后枚举 B,C 两个中转点，组合 A 和 D 的候选。复杂度 O(n²) 可过。' },
+  { year:2022, exam:'CSP-S', name:'策略游戏', pid:'P8818', diff:5, tags:['线段树','RMQ','博弈'],
+    desc:'小 L 和小 Q 轮流从各自的数列中选数。小 L 先选，小 Q 后选。两人都想最大化自己的最终得分。求在最优策略下小 L 的得分。需要处理多组查询。',
+    solution:'用线段树或 ST 表维护区间正数最大值、正数最小值、负数最大值、负数最小值。然后根据区间特性分类讨论最优选择。博弈本质是小 L 选一个数使小 Q 能获得的最大值最小化。' },
+  { year:2022, exam:'NOIP', name:'种花', pid:'P8865', diff:4, tags:['前缀和','枚举'],
+    desc:'在 n×m 的网格中种花，某些格子被占用。求能种出 C 型（两横一竖）和 F 型（三横一竖）图案的方案数，对 998244353 取模。',
+    solution:'用前缀和预处理每个格子下方和右方的连续空格数。枚举每个可能的 C 和 F 形状的转折点，用前缀和优化 O(n²)。需要细心处理模运算。' },
+  { year:2021, exam:'CSP-J', name:'分糖果', pid:'P7909', diff:1, tags:['数学'],
+    desc:'给定 n 颗糖果和 L,R，从 L 到 R 中选一个数 k，每人分 k 颗，分完 n/k 轮后剩余的糖果数为 n mod k。求最大可能的剩余糖果数。',
+    solution:'分类讨论：如果 L 到 R 之间有数能超过 n/2，则可以取到 n-1（最大值）。否则在 R 附近枚举。' },
+  { year:2021, exam:'CSP-J', name:'插入排序', pid:'P7910', diff:3, tags:['排序','模拟'],
+    desc:'给定数组，支持修改某个位置的值和查询某个值在稳定排序后的位置。',
+    solution:'维护原始下标和值，排序后计算排名。每次修改后局部重排。' },
+  { year:2021, exam:'CSP-J', name:'网络连接', pid:'P7911', diff:3, tags:['字符串','模拟'],
+    desc:'实现简易地址解析系统，判断 IP 地址合法性并处理 SERVER/CLIENT 指令。',
+    solution:'字符串解析大模拟。按格式拆分、检查前导零和数字范围，用 map 维护。' },
+  { year:2021, exam:'CSP-S', name:'廊桥分配', pid:'P7913', diff:3, tags:['贪心','优先队列'],
+    desc:'分配廊桥给国内和国际航班，最大化停靠廊桥的航班总数。',
+    solution:'分别计算国内/国际分配 k 个廊桥时的服务航班数，再用枚举分配方案取最大值。' },
+  { year:2021, exam:'CSP-S', name:'括号序列', pid:'P7914', diff:5, tags:['DP','区间DP'],
+    desc:'给定超长括号串（含通配符），求能通过合法变换得到的合法括号序列数量。',
+    solution:'区间 DP。定义多种状态分别表示不同类型子串的合法方案数，注意去重。' },
+];
+
+// ============================================================
 //  APP STATE
 // ============================================================
 
@@ -865,6 +959,60 @@ function resetQuiz() {
 }
 
 // ============================================================
+//  EXAMS (往届真题)
+// ============================================================
+
+let examFilter = 'all';
+
+function renderExams() {
+  const container = document.getElementById('examList');
+  const filtered = examFilter === 'all' ? examData : examData.filter(e => e.exam === examFilter);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无该分类的题目</div>';
+    return;
+  }
+  
+  container.innerHTML = filtered.map(p => {
+    const stars = '★'.repeat(p.diff) + '☆'.repeat(Math.max(0, 5 - p.diff));
+    const tagClass = p.exam === 'CSP-S' ? 'gold' : (p.exam === 'NOIP' ? 'blue' : 'green');
+    const pid = p.pid || '';
+    
+    return `<div class="card exam-card">
+      <div class="exam-header" onclick="toggleExam(this)">
+        <span class="exam-title">${p.year} ${p.exam} · ${escapeHtml(p.name)}</span>
+        <span class="exam-meta">
+          <span class="stars">${stars}</span>
+          <span class="exam-tag ${tagClass}">${p.exam}</span>
+          ${p.tags.map(t => `<span class="exam-tag">${escapeHtml(t)}</span>`).join('')}
+          <span style="color:var(--text);opacity:.6">▾</span>
+        </span>
+      </div>
+      <div class="exam-body">
+        <div class="exam-desc">📌 <strong>题目描述（简要）：</strong><br>${escapeHtml(p.desc)}</div>
+        <div class="exam-solution">💡 <strong>解题思路：</strong><br>${escapeHtml(p.solution)}</div>
+        ${pid ? `<a class="exam-link" href="https://www.luogu.com.cn/problem/${pid}" target="_blank">🔗 在洛谷查看原题（${pid}）</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleExam(header) {
+  const card = header.closest('.exam-card');
+  card.classList.toggle('open');
+  const arrows = card.querySelectorAll('.exam-meta span:last-child');
+  arrows.forEach(a => a.textContent = card.classList.contains('open') ? '▴' : '▾');
+}
+
+function filterExams(filter) {
+  examFilter = filter;
+  document.querySelectorAll('.exam-filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === filter);
+  });
+  renderExams();
+}
+
+// ============================================================
 //  PROGRESS
 // ============================================================
 
@@ -962,6 +1110,7 @@ renderSyllabus();
 renderAccordions('basicsAccordion', basicsData);
 renderAccordions('algoAccordion', algoData);
 renderQuiz();
+renderExams();
 renderProgress();
 updateHeroStats();
 </script>
