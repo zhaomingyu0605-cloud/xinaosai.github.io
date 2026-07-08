@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSP-J/S 第一轮 · 信奥赛训练专栏</title>
+<style>
+/* ===== Reset & Base ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif;background:#f5f7fa;color:#333;line-height:1.7}
+
+/* ===== Theme Variables ===== */
+:root{--bg:#f5f7fa;--card:#fff;--text:#333;--heading:#1a1a2e;--accent:#e94560;--accent2:#0f3460;--code-bg:#1e1e2e;--code-text:#cdd6f4;--border:#e2e8f0;--nav-bg:rgba(15,52,96,0.95);--nav-text:#fff;--tag-bg:#e94560;--tag-text:#fff;--footer-bg:#1a1a2e;--footer-text:#aab;--shadow:0 2px 12px rgba(0,0,0,0.08);--radius:12px;--good:#2ea043;--warn:#d4a800;--info:#58a6ff}
+[data-theme="dark"]{--bg:#0d1117;--card:#161b22;--text:#c9d1d9;--heading:#f0f6fc;--accent:#ff7b72;--accent2:#58a6ff;--code-bg:#0d1117;--code-text:#c9d1d9;--border:#30363d;--nav-bg:rgba(22,27,34,0.97);--nav-text:#c9d1d9;--tag-bg:#ff7b72;--tag-text:#0d1117;--footer-bg:#161b22;--footer-text:#8b949e;--shadow:0 2px 12px rgba(0,0,0,0.3)}
+
+/* ===== Navbar ===== */
+nav{position:fixed;top:0;width:100%;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 8px rgba(0,0,0,0.15)}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:1.2rem;text-decoration:none}
+.nav-brand svg{width:28px;height:28px}
+.nav-links{display:flex;gap:8px;list-style:none;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+.nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.88rem;transition:.2s}
+.nav-links a:hover{background:rgba(255,255,255,0.12);color:#fff}
+.nav-links a.active{background:rgba(233,69,96,0.3);color:#fff}
+.theme-btn{background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.9rem;transition:.2s}
+.theme-btn:hover{background:rgba(255,255,255,0.15)}
+.back-home{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;padding:4px 10px;border-radius:6px;transition:.2s}
+.back-home:hover{background:rgba(255,255,255,0.1);color:#fff}
+
+/* ===== Hero ===== */
+.hero{background:linear-gradient(135deg,#0f3460 0%,#16213e 40%,#1a1a2e 100%);color:#fff;padding:100px 20px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(233,69,96,0.12),transparent 50%)}
+.hero h1{font-size:clamp(1.6rem,4vw,2.6rem);margin-bottom:10px;position:relative}
+.hero .subtitle{font-size:clamp(0.95rem,2vw,1.1rem);opacity:.8;max-width:650px;margin:0 auto 20px;position:relative}
+.hero-stats{display:flex;gap:30px;justify-content:center;margin-top:30px;position:relative;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:1.8rem;font-weight:800;color:var(--accent)}
+.hero-stat .label{font-size:.82rem;opacity:.7;margin-top:2px}
+
+/* ===== Container ===== */
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+
+/* ===== Section ===== */
+section{padding:50px 0}
+.section-title{font-size:clamp(1.3rem,3vw,1.7rem);color:var(--heading);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-desc{color:var(--text);opacity:.7;margin-bottom:25px;font-size:.92rem}
+
+/* ===== Cards ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:.25s}
+.card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,0.1)}
+
+/* ===== Grids ===== */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+/* ===== Module Cards (用于知识点模块) ===== */
+.module-card{cursor:pointer;position:relative;overflow:hidden;border-left:4px solid var(--accent2);padding:18px 20px}
+.module-card:hover{border-left-color:var(--accent)}
+.module-card .module-num{font-size:2rem;font-weight:800;color:var(--border);position:absolute;top:10px;right:16px;line-height:1}
+.module-card h3{font-size:1.05rem;color:var(--heading);margin-bottom:4px}
+.module-card p{font-size:.85rem;color:var(--text);opacity:.7}
+.module-card .days{display:inline-block;background:rgba(88,166,255,0.12);color:var(--accent2);padding:2px 10px;border-radius:12px;font-size:.75rem;margin-top:6px}
+.module-card.done{border-left-color:var(--good)}
+.module-card.done::after{content:'✅';position:absolute;top:12px;right:16px;font-size:1.1rem}
+
+/* ===== Accordion ===== */
+.accordion{margin-bottom:10px}
+.accordion-header{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--heading);transition:.2s;font-size:.95rem}
+.accordion-header:hover{background:var(--border)}
+.accordion-header .arrow{transition:.3s;font-size:.8rem;flex-shrink:0}
+.accordion.open .accordion-header{border-radius:var(--radius) var(--radius) 0 0}
+.accordion.open .accordion-header .arrow{transform:rotate(180deg)}
+.accordion-body{background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.accordion.open .accordion-body{max-height:5000px;padding:14px 18px}
+.accordion-body p,.accordion-body .code-block{margin-bottom:10px}
+
+/* ===== Code Block ===== */
+.code-block{background:var(--code-bg);color:var(--code-text);border-radius:8px;padding:14px;overflow-x:auto;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:.85rem;line-height:1.5;position:relative;margin:10px 0}
+.code-block .copy-btn{position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:.7rem;transition:.2s}
+.code-block .copy-btn:hover{background:rgba(255,255,255,0.2)}
+
+/* ===== Knowledge Points (知识点卡片) ===== */
+.kp-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;transition:.2s}
+.kp-card h4{color:var(--heading);font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.kp-card p{font-size:.88rem;color:var(--text);opacity:.85}
+.kp-card .tag{display:inline-block;background:var(--tag-bg);color:var(--tag-text);padding:1px 8px;border-radius:12px;font-size:.7rem;font-weight:600;margin-right:4px}
+.kp-card .tag.blue{background:rgba(88,166,255,0.15);color:var(--accent2)}
+.kp-card .tag.green{background:rgba(46,160,67,0.15);color:var(--good)}
+.kp-card .tag.orange{background:rgba(212,168,0,0.15);color:var(--warn)}
+.kp-card .tag.red{background:rgba(233,69,96,0.12);color:var(--accent)}
+
+/* ===== Tabs ===== */
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab-btn{background:none;border:none;padding:10px 18px;cursor:pointer;font-weight:600;color:var(--text);opacity:.6;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s;font-size:.9rem}
+.tab-btn:hover{opacity:.9}
+.tab-btn.active{opacity:1;color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ===== Progress Tracker ===== */
+.progress-card{text-align:center;padding:24px}
+.progress-ring{width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,var(--border) 0deg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;position:relative}
+.progress-ring-inner{width:76px;height:76px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--accent)}
+
+/* ===== Quiz ===== */
+.quiz-option{display:block;padding:10px 16px;margin-bottom:6px;background:var(--card);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:.2s;font-size:.92rem}
+.quiz-option:hover{border-color:var(--accent2)}
+.quiz-option.correct{border-color:var(--good);background:rgba(46,160,67,0.08)}
+.quiz-option.wrong{border-color:var(--accent);background:rgba(233,69,96,0.08)}
+.quiz-option input{display:none}
+.quiz-result{margin-top:8px;padding:8px 14px;border-radius:8px;font-weight:600;display:none;font-size:.9rem}
+.quiz-result.show{display:block}
+.quiz-result.pass{background:rgba(46,160,67,0.1);color:var(--good);border:1px solid rgba(46,160,67,0.25)}
+.quiz-result.fail{background:rgba(233,69,96,0.1);color:var(--accent);border:1px solid rgba(233,69,96,0.25)}
+.quiz-btn{background:var(--accent2);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s;font-size:.88rem}
+.quiz-btn:hover{opacity:.85}
+
+/* ===== Table ===== */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:var(--accent2);color:#fff;font-weight:600}
+tr:nth-child(even){background:rgba(0,0,0,0.02)}
+[data-theme="dark"] tr:nth-child(even){background:rgba(255,255,255,0.03)}
+
+/* ===== Timeline ===== */
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding:10px 0 10px 20px;margin-bottom:6px}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--accent2);border:2px solid var(--card)}
+.timeline-item h4{font-size:.95rem;color:var(--heading)}
+.timeline-item p{font-size:.85rem;color:var(--text);opacity:.7}
+
+/* ===== Info Box ===== */
+.info-box{background:rgba(88,166,255,0.08);border-left:4px solid var(--info);padding:12px 16px;border-radius:0 8px 8px 0;margin:10px 0;font-size:.9rem}
+.warn-box{background:rgba(212,168,0,0.08);border-left:4px solid var(--warn);padding:12px 16px;border-radius:0 8px 8px 0;margin:10px 0;font-size:.9rem}
+
+/* ===== Footer ===== */
+footer{background:var(--footer-bg);color:var(--footer-text);padding:30px 20px;text-align:center;font-size:.85rem}
+footer a{color:var(--accent2);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ===== Back to Top ===== */
+#backToTop{position:fixed;bottom:30px;right:30px;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 4px 12px rgba(233,69,96,0.4);display:none;transition:.3s;z-index:999}
+#backToTop:hover{transform:translateY(-3px)}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
+  nav{padding:0 12px}
+  .nav-links a{padding:4px 10px;font-size:.8rem}
+  .hero{padding:80px 16px 40px}
+  .hero-stats{gap:16px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  section{padding:35px 0}
+  #backToTop{bottom:16px;right:16px}
+  .tab-btn{padding:8px 12px;font-size:.82rem}
+}
+
+/* ===== Misc ===== */
+.highlight{background:rgba(233,69,96,0.06);border-left:3px solid var(--accent);padding:8px 14px;border-radius:0 8px 8px 0;margin:8px 0;font-size:.88rem}
+.empty-state{text-align:center;padding:30px;color:var(--text);opacity:.5}
+.fade-in{animation:fadeIn .5s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.katex-placeholder{background:var(--code-bg);padding:1px 6px;border-radius:4px;font-style:italic;color:var(--code-text);font-size:.82rem}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav>
+  <a href="index.html" class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    信奥赛C++
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="back-home">← 返回主页</a></li>
+    <li><a href="#modules" class="active">📚 知识模块</a></li>
+    <li><a href="#roadmap">🗺️ 学习路线</a></li>
+    <li><a href="#computer">💻 计算机基础</a></li>
+    <li><a href="#math">🧮 数学</a></li>
+    <li><a href="#cpp">⚡ C++</a></li>
+    <li><a href="#dsalgo">📊 数据结构&算法</a></li>
+    <li><a href="#quiz">📝 刷题</a></li>
+    <li><a href="#progress">📈 进度</a></li>
+  </ul>
+  <button class="theme-btn" onclick="toggleTheme()" title="切换暗色/亮色模式">🌓</button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <h1>🏛️ CSP-J/S 第一轮 · 知识全攻略</h1>
+  <p class="subtitle">从计算机基础到竞赛技巧，覆盖所有考点。每讲配套练习题 + 历年真题解析。</p>
+  <div class="hero-btns" style="position:relative;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="#modules" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 26px;border-radius:10px;font-weight:600;text-decoration:none;transition:.25s;font-size:.95rem;background:var(--accent);color:#fff">📚 开始学习</a>
+    <a href="#quiz" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 26px;border-radius:10px;font-weight:600;text-decoration:none;transition:.25s;font-size:.95rem;border:2px solid rgba(255,255,255,0.6);color:#fff">📝 模拟测试</a>
+    <a href="index.html" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 26px;border-radius:10px;font-weight:600;text-decoration:none;transition:.25s;font-size:.95rem;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">🏠 回主页</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num" id="moduleCount">19</div><div class="label">知识模块</div></div>
+    <div class="hero-stat"><div class="num" id="kpCount">0</div><div class="label">细知识点</div></div>
+    <div class="hero-stat"><div class="num" id="quizCount">0</div><div class="label">练习题</div></div>
+  </div>
+</section>
+
+<!-- ===== MODULE OVERVIEW ===== -->
+<section id="modules">
+  <div class="container">
+    <h2 class="section-title">📋 专栏总览</h2>
+    <p class="section-desc">按知识点分模块，每个模块标注建议学习天数，点击即可跳转。</p>
+    <div id="moduleGrid" class="grid-3"></div>
+  </div>
+</section>
+
+<!-- ===== TABBED CONTENT ===== -->
+<section style="padding-top:0">
+  <div class="container">
+    <div class="tab-bar" id="tabBar"></div>
+    <div id="tabContent"></div>
+  </div>
+</section>
+
+<!-- ===== ROADMAP ===== -->
+<section id="roadmap" style="background:var(--card)">
+  <div class="container">
+    <h2 class="section-title">🗺️ 推荐学习路线</h2>
+    <p class="section-desc">四个阶段、27天冲刺计划，从零到晋级。</p>
+    <div class="timeline" id="roadmapTimeline"></div>
+  </div>
+</section>
+
+<!-- ===== COMPUTER BASICS ===== -->
+<section id="computer">
+  <div class="container">
+    <h2 class="section-title">💻 计算机基础知识</h2>
+    <p class="section-desc">硬件、软件、发展史、网络——第一轮必考内容。</p>
+    <div id="computerAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== MATH ===== -->
+<section id="math">
+  <div class="container">
+    <h2 class="section-title">🧮 数学基础</h2>
+    <p class="section-desc">数论、组合数学、概率——信奥赛的数学要求。</p>
+    <div id="mathAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== C++ BASICS ===== -->
+<section id="cpp">
+  <div class="container">
+    <h2 class="section-title">⚡ C++ 程序设计</h2>
+    <p class="section-desc">语法、STL、指针——阅读程序题的核心能力。</p>
+    <div id="cppAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== DATA STRUCTURES & ALGORITHMS ===== -->
+<section id="dsalgo">
+  <div class="container">
+    <h2 class="section-title">📊 数据结构与算法</h2>
+    <p class="section-desc">栈、队列、树、图、排序、DP、搜索——第一轮最高频考点。</p>
+    <div id="dsalgoAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== EXAM STRATEGY ===== -->
+<section id="exam-strategy">
+  <div class="container">
+    <h2 class="section-title">🎯 题型专题</h2>
+    <p class="section-desc">阅读程序题、完善程序题——拿高分的关键。</p>
+    <div id="examStrategyAccordion"></div>
+  </div>
+</section>
+
+<!-- ===== QUIZ ===== -->
+<section id="quiz" style="background:var(--card)">
+  <div class="container">
+    <h2 class="section-title">📝 第一轮模拟练习</h2>
+    <p class="section-desc">选择题练习，覆盖全知识点。看看你能拿多少分！</p>
+    <div id="quizArea"></div>
+  </div>
+</section>
+
+<!-- ===== PROGRESS ===== -->
+<section id="progress">
+  <div class="container">
+    <h2 class="section-title">📈 学习进度</h2>
+    <p class="section-desc">进度保存在浏览器本地，随时回来继续。</p>
+    <div class="grid-2">
+      <div class="progress-card card">
+        <div class="progress-ring" id="progressRing">
+          <div class="progress-ring-inner" id="progressPercent">0%</div>
+        </div>
+        <p style="color:var(--text);font-weight:600">模块完成度</p>
+        <button class="quiz-btn" onclick="resetProgress()" style="background:var(--border);color:var(--text);margin-top:8px">🔄 重置进度</button>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--heading);margin-bottom:8px">已完成的模块</h3>
+        <div id="doneModules" style="font-size:.88rem;color:var(--text)"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>🦐 CSP-J/S 第一轮训练专栏 · <a href="index.html">返回信奥赛主页</a></p>
+  <p style="margin-top:6px;font-size:.8rem">所有数据存储在本地浏览器 · 免费 · 开源</p>
+</footer>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+let state = {
+  theme: localStorage.getItem('xinaosai-theme') || 'light',
+  modules: JSON.parse(localStorage.getItem('r1-modules') || '[]'),
+  quiz: JSON.parse(localStorage.getItem('r1-quiz') || '{}'),
+  activeTab: 'overview',
+};
+
+// init theme
+if (state.theme === 'dark') document.documentElement.setAttribute('data-theme','dark');
+
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  localStorage.setItem('xinaosai-theme', state.theme);
+}
+
+// ============================================================
+//  DATA: MODULES
+// ============================================================
+const modules = [
+  { id:'m1',  num:'01', name:'计算机发展史',           desc:'图灵、冯·诺依曼、计算机代际划分',          days:1, phase:'基础扫盲' },
+  { id:'m2',  num:'02', name:'硬件系统',               desc:'CPU、内存、外存、I/O设备工作原理',          days:1, phase:'基础扫盲' },
+  { id:'m3',  num:'03', name:'软件与操作系统',          desc:'系统软件、应用软件、OS基本概念',            days:1, phase:'基础扫盲' },
+  { id:'m4',  num:'04', name:'进制与编码',             desc:'二/八/十/十六进制互转、原反补码、ASCII',     days:1, phase:'基础扫盲' },
+  { id:'m5',  num:'05', name:'网络与Internet',         desc:'OSI/TCP-IP、IP地址、HTTP、DNS',            days:1, phase:'基础扫盲' },
+  { id:'m6',  num:'06', name:'逻辑与位运算',           desc:'与或非异或、位运算、真值表',                days:1, phase:'基础扫盲' },
+  { id:'m7',  num:'07', name:'C++语法基础',            desc:'变量、类型、表达式、流程控制',              days:2, phase:'核心突破' },
+  { id:'m8',  num:'08', name:'数组与字符串',           desc:'一维/二维数组、字符数组、string',           days:1, phase:'核心突破' },
+  { id:'m9',  num:'09', name:'函数与递归',             desc:'参数传递、作用域、递归原理',                days:1, phase:'核心突破' },
+  { id:'m10', num:'10', name:'指针·引用·结构体',       desc:'指针运算、引用传参、结构体与联合体',         days:1, phase:'核心突破' },
+  { id:'m11', num:'11', name:'STL标准库',              desc:'vector/stack/queue/map/set/algorithm',     days:1, phase:'核心突破' },
+  { id:'m12', num:'12', name:'基本数据结构',           desc:'栈、队列、链表、树、图、堆',                days:2, phase:'核心突破' },
+  { id:'m13', num:'13', name:'排序与查找',             desc:'冒泡/选择/插入/归并/快排/二分',             days:1, phase:'核心突破' },
+  { id:'m14', num:'14', name:'搜索与回溯',             desc:'DFS、BFS、回溯法',                         days:1, phase:'核心突破' },
+  { id:'m15', num:'15', name:'贪心·分治·递推',         desc:'贪心策略、分治思想、递推公式',              days:1, phase:'核心突破' },
+  { id:'m16', num:'16', name:'动态规划',               desc:'背包DP、线性DP、LIS/LCS',                  days:2, phase:'核心突破' },
+  { id:'m17', num:'17', name:'图论基础',               desc:'最短路、MST、拓扑排序',                    days:1, phase:'核心突破' },
+  { id:'m18', num:'18', name:'数学进阶',               desc:'数论(gcd/质数/模)、排列组合、概率',         days:2, phase:'核心突破' },
+  { id:'m19', num:'19', name:'真题与应试',             desc:'阅读程序/完善程序技巧、时间分配',            days:2, phase:'题型实战' },
+];
+
+// ============================================================
+//  DATA: KNOWLEDGE POINTS (by module)
+// ============================================================
+const knowledgePoints = {
+  // ---- 计算机发展史 ----
+  m1: [
+    { title:'艾伦·图灵', desc:'英国数学家，计算机科学之父。提出了"图灵机"理论模型，奠定了可计算性理论的基础。', tags:['人物'] },
+    { title:'冯·诺依曼体系', desc:'存储程序概念，计算机由运算器、控制器、存储器、输入设备、输出设备五部分组成，是现代计算机的基础。', tags:['核心'] },
+    { title:'计算机代际划分', desc:'第一代(电子管)→第二代(晶体管)→第三代(集成电路)→第四代(大规模集成电路/微处理器)。', tags:['常识'] },
+    { title:'摩尔定律', desc:'集成电路上可容纳的晶体管数目约每 18-24 个月翻一番，性能也随之提升。', tags:['常识'] },
+    { title:'中国计算机发展', desc:'银河系列(超级计算机)、神威·太湖之光(曾世界第一)、龙芯(国产CPU)。', tags:['拓展'] },
+  ],
+  // ---- 硬件系统 ----
+  m2: [
+    { title:'CPU (中央处理器)', desc:'计算机的核心，由运算器(ALU)和控制器组成。主要性能指标：主频(Hz)、核心数、缓存大小。', tags:['核心'] },
+    { title:'存储器层次', desc:'寄存器(L1)→Cache(L2/L3)→内存(RAM)→外存(硬盘/SSD)。速度递减，容量递增，单位成本递减。', tags:['核心'] },
+    { title:'内存 (RAM)', desc:'随机存取存储器，断电后数据丢失。分为 DRAM（动态）和 SRAM（静态，用于Cache）。', tags:['基础'] },
+    { title:'外存', desc:'硬盘(HDD)、固态硬盘(SSD)、光盘、U盘。断电后数据不丢失，速度慢于内存。', tags:['基础'] },
+    { title:'输入输出设备', desc:'输入：键盘、鼠标、扫描仪。输出：显示器、打印机、音箱。既是输入又是输出：触摸屏、网卡。', tags:['基础'] },
+    { title:'总线', desc:'数据总线(位数决定一次传输数据量)、地址总线(位数决定最大寻址空间)、控制总线。', tags:['进阶'] },
+  ],
+  // ---- 软件与操作系统 ----
+  m3: [
+    { title:'系统软件 vs 应用软件', desc:'系统软件：OS、编译器、驱动程序。应用软件：Office、浏览器、游戏。', tags:['基础'] },
+    { title:'操作系统(OS)功能', desc:'进程管理、内存管理、文件系统、设备管理、用户接口。常见OS：Windows、Linux、macOS、Android、iOS。', tags:['核心'] },
+    { title:'编译与解释', desc:'编译器（一次性翻译，如C++）vs 解释器（逐行执行，如Python）。C++是编译型语言。', tags:['核心'] },
+    { title:'进程与线程', desc:'进程是资源分配的最小单位，线程是CPU调度的最小单位。一个进程可包含多个线程。', tags:['进阶'] },
+    { title:'存储管理', desc:'虚拟内存、分页/分段、页面置换算法(FIFO/LRU)。', tags:['进阶'] },
+  ],
+  // ---- 进制与编码 ----
+  m4: [
+    { title:'进制转换', desc:'R进制→十进制：按权展开。十进制→R进制：除R取余。二进制↔八进制(3位一组)、二进制↔十六进制(4位一组)。', tags:['核心','必考'] },
+    { title:'原码·反码·补码', desc:'正数三码相同。负数：原码(符号位1+绝对值)、反码(符号位不变其余取反)、补码(反码+1)。计算机中用补码存储整数。', tags:['核心','必考'] },
+    { title:'ASCII码', desc:'7位编码(0-127)，表示英文字母、数字、符号。A=65, a=97, 0=48。扩展ASCII为8位。', tags:['核心'] },
+    { title:'Unicode', desc:'统一编码，包含全球所有字符。UTF-8是变长编码，兼容ASCII，互联网最常用。', tags:['熟悉'] },
+    { title:'信息单位', desc:'bit(位)是信息最小单位。1 Byte = 8 bits。1 KB = 1024 B, 1 MB = 1024 KB, 1 GB = 1024 MB, 1 TB = 1024 GB。', tags:['基础'] },
+  ],
+  // ---- 网络 ----
+  m5: [
+    { title:'OSI七层模型', desc:'物理层→数据链路层→网络层→传输层→会话层→表示层→应用层。从下到上。', tags:['核心'] },
+    { title:'TCP/IP四层模型', desc:'网络接口层→网际层→传输层→应用层。对应OSI的简化版本，互联网实际使用。', tags:['核心'] },
+    { title:'IP地址', desc:'IPv4:32位, 4段0-255。IPv6:128位。特殊IP: 127.0.0.1(本地回环), 192.168.x.x(私有)。', tags:['核心','必考'] },
+    { title:'HTTP/HTTPS', desc:'HTTP是超文本传输协议(80端口)，HTTPS是加密版本(443端口，SSL/TLS)。', tags:['核心'] },
+    { title:'DNS', desc:'域名系统，将域名(如 www.baidu.com)解析为IP地址。', tags:['熟悉'] },
+    { title:'常见协议', desc:'TCP(面向连接可靠)、UDP(无连接快速)、FTP(文件传输)、SMTP(邮件发送)、DHCP(动态IP分配)。', tags:['进阶'] },
+  ],
+  // ---- 逻辑与位运算 ----
+  m6: [
+    { title:'基本逻辑运算', desc:'与(AND, ∧): 全1才1。或(OR, ∨): 有1就1。非(NOT, ¬): 取反。异或(XOR, ⊕): 相同为0不同为1。', tags:['核心','必考'] },
+    { title:'真值表', desc:'列出所有输入组合对应的输出值。n个输入有2ⁿ行。', tags:['核心'] },
+    { title:'位运算符号', desc:'C++: &(与), |(或), ^(异或), ~(取反), <<(左移), >>(右移)。左移1位等价×2，右移1位等价÷2(整数)。', tags:['核心','必考'] },
+    { title:'逻辑代数定律', desc:'交换律、结合律、分配律、德摩根定律(¬(A∧B)=¬A∨¬B, ¬(A∨B)=¬A∧¬B)。', tags:['进阶'] },
+  ],
+  // ---- C++语法 ----
+  m7: [
+    { title:'基本数据类型', desc:'int(32位), long long(64位), float(32位), double(64位), char(8位), bool(8位), void。', tags:['基础'] },
+    { title:'常量与变量', desc:'const定义常量。变量必须先声明后使用。全局变量默认初始化为0，局部变量未初始化有随机值。', tags:['基础'] },
+    { title:'运算符优先级', desc:'! ~ ++ -- (最高) → * / % → + - → << >> → < <= > >= → == != → & → ^ → | → && → || → ?: → = 赋值(最低)。', tags:['核心'] },
+    { title:'流程控制', desc:'if-else、switch-case（注意break）、for、while、do-while（至少执行一次）。', tags:['基础'] },
+    { title:'函数', desc:'函数声明/定义、形参/实参、值传递/引用传递、默认参数、函数重载。', tags:['核心'] },
+    { title:'作用域与生命周期', desc:'全局(整个程序)、局部(函数内)、静态static(生命周期贯穿程序)。', tags:['进阶'] },
+  ],
+  // ---- 数组与字符串 ----
+  m8: [
+    { title:'一维数组', desc:'int a[100]; 下标从0到n-1。数组名是首地址常量。sizeof(a)返回总字节数。', tags:['基础'] },
+    { title:'二维数组', desc:'int a[10][10]; 按行优先存储。sizeof(a[0])为一行字节数。', tags:['基础'] },
+    { title:'字符数组与字符串', desc:'char s[]="hello"; 以\'\\0\'结尾。strlen(s)得到长度(不含\\0), sizeof(s)包括\\0。', tags:['核心'] },
+    { title:'C++ string', desc:'#include <string>。支持+拼接、compare、substr、find。比字符数组更安全方便。', tags:['核心'] },
+    { title:'常用字符串函数', desc:'strcpy(复制)、strcat(拼接)、strcmp(比较，返回0表示相等)、strlen(长度)。需要#include <cstring>。', tags:['核心'] },
+  ],
+  // ---- 函数与递归 ----
+  m9: [
+    { title:'值传递与引用传递', desc:'值传递：拷贝实参，函数内修改不影响实参。引用传递：传别名，函数内修改影响实参。', tags:['核心'] },
+    { title:'递归三要素', desc:'1.终止条件(边界) 2.递归表达式(自身调用) 3.向边界靠近。核心：递推关系 + 终止条件。', tags:['核心','必考'] },
+    { title:'递归·栈的关系', desc:'每次递归调用在内存中压入一个栈帧(存储局部变量和返回地址)。递归深度过大→栈溢出。', tags:['进阶'] },
+    { title:'尾递归', desc:'递归调用在函数的最后一步。编译器可优化为循环，避免栈溢出。', tags:['拓展'] },
+  ],
+  // ---- 指针·引用·结构体 ----
+  m10: [
+    { title:'指针基础', desc:'int *p = &a; *p访问值。指针变量存储的是地址。32位系统指针占4字节，64位占8字节。', tags:['核心'] },
+    { title:'指针与数组', desc:'数组名a等价于&a[0]。a[i]等价于*(a+i)。指针可加减整数(移动sizeof(类型)个字节)。', tags:['核心','必考'] },
+    { title:'NULL与野指针', desc:'NULL指针指向0地址(安全，访问会段错误)。野指针(未初始化)非常危险，必须避免。', tags:['核心'] },
+    { title:'引用', desc:'int &r = a; 引用即别名，必须在声明时初始化，不能更改绑定的变量。常用于函数参数避免拷贝。', tags:['核心'] },
+    { title:'结构体(struct)', desc:'将不同类型数据组合在一起。struct Student { int id; string name; }。对齐填充。', tags:['核心'] },
+    { title:'联合体(union)', desc:'所有成员共享同一块内存，大小为最大成员的大小。同一时刻只有一个成员有效。', tags:['进阶'] },
+  ],
+  // ---- STL ----
+  m11: [
+    { title:'vector (动态数组)', desc:'push_back/pop_back, size, resize, clear, insert, erase。支持随机访问O(1)。', tags:['核心'] },
+    { title:'stack (栈)', desc:'push, pop, top, empty, size。后进先出(LIFO)。底层默认用deque实现。', tags:['核心','必考'] },
+    { title:'queue (队列)', desc:'push(入队尾), pop(出队头), front, back, empty, size。先进先出(FIFO)。', tags:['核心','必考'] },
+    { title:'priority_queue', desc:'优先队列(默认大根堆，即最大元素在顶部)。push, pop, top。自定义比较用greater<int>得到小根堆。', tags:['核心'] },
+    { title:'map / unordered_map', desc:'map(有序，红黑树, O(log n))。unordered_map(无序，哈希表, O(1))。operator[]自动插入默认值。', tags:['核心'] },
+    { title:'set / unordered_set', desc:'set(有序集合，去重)。insert, erase, find, count。', tags:['核心'] },
+    { title:'algorithm 头文件', desc:'sort, reverse, unique(需先sort去重), lower_bound/upper_bound(需有序), next_permutation, max/min, swap。', tags:['核心'] },
+  ],
+  // ---- 基本数据结构 ----
+  m12: [
+    { title:'栈 (Stack)', desc:'LIFO。应用：括号匹配、表达式求值、DFS、函数调用。数组或STL实现。', tags:['核心','必考'] },
+    { title:'队列 (Queue)', desc:'FIFO。应用：BFS、任务调度、缓存。循环队列避免假溢出。', tags:['核心','必考'] },
+    { title:'链表 (Linked List)', desc:'单向/双向/循环链表。插入删除O(1)，查找O(n)。数组模拟链表在竞赛中很常见。', tags:['核心'] },
+    { title:'二叉树', desc:'每个节点最多2个子树。满二叉树、完全二叉树、二叉搜索树(BST)。遍历：前/中/后序(递归)和层序(BFS)。', tags:['核心','必考'] },
+    { title:'完全二叉树性质', desc:'节点编号i(从1开始)：左子=2i, 右子=2i+1, 父=i/2(向下取整)。n个节点高度为⌈log₂(n+1)⌉。', tags:['核心','必考'] },
+    { title:'堆 (Heap)', desc:'完全二叉树。大根堆(父≥子)、小根堆(父≤子)。插入O(log n)，删除堆顶O(log n)。', tags:['核心'] },
+    { title:'图 (Graph)', desc:'有向/无向、带权/无权。存储方式：邻接矩阵(O(n²)空间)、邻接表(O(n+m))。', tags:['核心','必考'] },
+    { title:'图的遍历', desc:'DFS(递归/栈)、BFS(队列)。需用visited[]避免重复访问。', tags:['核心','必考'] },
+  ],
+  // ---- 排序与查找 ----
+  m13: [
+    { title:'冒泡排序', desc:'相邻比较，两两交换。O(n²)平均，最好O(n)已有序。稳定排序。', tags:['核心','必考'] },
+    { title:'选择排序', desc:'每次选最小放前面。O(n²)。不稳定。', tags:['核心','必考'] },
+    { title:'插入排序', desc:'将元素插入已排序部分。O(n²)，最好O(n)。稳定。适合数据量小或基本有序。', tags:['核心','必考'] },
+    { title:'归并排序', desc:'分治思想，先分再合。O(n log n)。稳定。需要额外O(n)空间。', tags:['核心'] },
+    { title:'快速排序', desc:'选基准partition，比基准小放左边大的放右边。平均O(n log n)，最坏O(n²)。不稳定。', tags:['核心','必考'] },
+    { title:'堆排序', desc:'建堆O(n)+每次取堆顶O(log n)。O(n log n)。不稳定。', tags:['进阶'] },
+    { title:'计数排序', desc:'统计每个值出现次数。O(n+k)，k为值范围。非比较排序，适用于值范围小的情况。', tags:['进阶'] },
+    { title:'排序稳定性', desc:'相等的元素排序后相对位置不变→稳定。冒泡、插入、归并稳定；选择、快排、堆排不稳定。', tags:['核心'] },
+    { title:'二分查找', desc:'在有序序列中每次排除一半。O(log n)。前提：序列有序。lower_bound(first≥x), upper_bound(first>x)。', tags:['核心','必考'] },
+  ],
+  // ---- 搜索与回溯 ----
+  m14: [
+    { title:'DFS (深度优先搜索)', desc:'递归实现，一条路走到底然后回溯。核心：递归 + 状态标记 + 回溯恢复。', tags:['核心','必考'] },
+    { title:'BFS (广度优先搜索)', desc:'队列实现，按层遍历。常用于求最短路径(边权相等时)。', tags:['核心','必考'] },
+    { title:'回溯法', desc:'DFS的一种，在搜索过程中撤销选择(恢复状态)。典型问题：N皇后、全排列、子集和。', tags:['核心'] },
+    { title:'剪枝', desc:'在搜索过程中提前排除不可能的解，减少搜索空间。常见剪枝：可行性剪枝、最优性剪枝。', tags:['进阶'] },
+  ],
+  // ---- 贪心·分治·递推 ----
+  m15: [
+    { title:'贪心算法', desc:'每一步都选择当前最优解。适用范围：局部最优能推出全局最优。典型：区间选点、活动安排、哈夫曼编码。', tags:['核心','必考'] },
+    { title:'分治算法', desc:'将大问题分解为同类型子问题，分别求解后合并。典型：归并排序、快排、二分查找。三步骤：分解→解决→合并。', tags:['核心'] },
+    { title:'递推（动态规划的基础）', desc:'由已知逐步推导出未知。和递归的区别：递推自底向上，递归自顶向下。典型：斐波那契数列、汉诺塔。', tags:['核心'] },
+  ],
+  // ---- 动态规划 ----
+  m16: [
+    { title:'DP三要素', desc:'1.状态定义 2.状态转移方程 3.边界条件。核心思想：重叠子问题+最优子结构。', tags:['核心','必考'] },
+    { title:'01背包', desc:'n件物品，容量m，每件物品只能选或不选。dp[j]=max(dp[j], dp[j-w[i]]+v[i])，内层从大到小遍历。', tags:['核心','必考'] },
+    { title:'完全背包', desc:'每件物品可取无限次。与01背包唯一区别：内层从小到大遍历。', tags:['核心'] },
+    { title:'最长上升子序列 LIS', desc:'O(n²) DP或O(n log n)用二分优化。dp[i]=max(dp[j]+1) for j<i, a[j]<a[i]。', tags:['核心'] },
+    { title:'最长公共子序列 LCS', desc:'dp[i][j]表示A前i个和B前j个的LCS长度。转移：A[i]==B[j]则dp[i-1][j-1]+1，否则max(dp[i-1][j],dp[i][j-1])。', tags:['核心'] },
+    { title:'区间DP', desc:'dp[l][r]表示区间[l,r]上的最优解。转移：枚举中间点k。典型：石子合并、括号匹配。', tags:['进阶'] },
+  ],
+  // ---- 图论 ----
+  m17: [
+    { title:'最短路径——Dijkstra', desc:'单源最短路(非负权)。优先队列优化O((n+m)log n)。核心：每次取dist最小的未访问节点。', tags:['核心','必考'] },
+    { title:'最短路径——Floyd', desc:'全源最短路O(n³)。dp[k][i][j]表示经过不超过k号节点从i到j最短路。代码极短。', tags:['核心'] },
+    { title:'最小生成树——Kruskal', desc:'按边权重从小到大选边，不形成环。O(m log m)。用并查集判断是否形成环。', tags:['核心'] },
+    { title:'最小生成树——Prim', desc:'从一个节点开始，每次选可达的最小边加入。类似Dijkstra。O(n²)或O(m log n)。', tags:['熟悉'] },
+    { title:'拓扑排序', desc:'对有向无环图(DAG)排序。每次选入度为0的节点删除。应用：任务调度、依赖解析。', tags:['核心'] },
+  ],
+  // ---- 数学进阶 ----
+  m18: [
+    { title:'最大公约数 gcd', desc:'欧几里得算法：gcd(a,b)=gcd(b,a%b)。当b=0时，gcd(a,0)=a。', tags:['核心','必考'] },
+    { title:'最小公倍数 lcm', desc:'lcm(a,b)=a/gcd(a,b)*b（先除后乘避免溢出）。', tags:['核心'] },
+    { title:'质数与合数', desc:'>1且只能被1和自身整除的数。质因数分解：短除法。埃氏筛O(n log log n)求范围内所有质数。', tags:['核心'] },
+    { title:'模运算', desc:'(a+b)%m=(a%m+b%m)%m, (a*b)%m=(a%m * b%m)%m。负数取模特殊处理。(a%m+m)%m保证非负。', tags:['核心'] },
+    { title:'快速幂', desc:'O(log n)求a^b%p。二进制分解指数，迭代平方。', tags:['核心'] },
+    { title:'排列', desc:'从n个中选k个有序排列：P(n,k)=n!/(n-k)!。全排列：n!。', tags:['核心','必考'] },
+    { title:'组合', desc:'从n个中选k个无序组合：C(n,k)=n!/(k!(n-k)!)。组合递推：C(n,k)=C(n-1,k)+C(n-1,k-1)(杨辉三角)。', tags:['核心','必考'] },
+    { title:'概率初步', desc:'P(A)=事件A发生的结果数/总结果数。条件概率、期望(加权平均)。', tags:['核心'] },
+  ],
+  // ---- 真题与应试 ----
+  m19: [
+    { title:'阅读程序题技巧', desc:'1.手动模拟(拿纸笔trace) 2.关注循环边界 3.注意数据类型(会不会溢出) 4.递归题画递归树 5.注意全局变量初始值。', tags:['技巧'] },
+    { title:'完善程序题技巧', desc:'1.先理解程序整体功能 2.关注注释和变量命名 3.填空处上下文分析 4.用特殊值验证 5.注意算法模板的固定写法。', tags:['技巧'] },
+    { title:'时间分配策略', desc:'选择题30-40分钟，阅读程序题40-50分钟，完善程序题30-40分钟。不会的先跳过，最后再回来。', tags:['策略'] },
+    { title:'常见陷阱', desc:'数组越界、整数溢出、除零、未初始化变量、死循环、逻辑运算符短路求值。', tags:['策略'] },
+    { title:'复杂度分析速查', desc:'O(1):常数级；O(log n):二分；O(n):线性；O(n log n):排序/分治；O(n²):双重循环；O(2ⁿ):指数级(一般不可行)。', tags:['核心'] },
+  ],
+};
+
+// ============================================================
+//  DATA: ALL KPS (for stats)
+// ============================================================
+const allKPs = Object.values(knowledgePoints).flat();
+
+// ============================================================
+//  DATA: ROADMAP
+// ============================================================
+const roadmapData = [
+  { phase:'第一阶段：基础扫盲', days:'约 7 天', items:['计算机发展史','硬件系统','软件与操作系统','进制与编码','网络与Internet','逻辑与位运算','信息表示'] },
+  { phase:'第二阶段：C++核心语法', days:'约 6 天', items:['C++语法基础','数组与字符串','函数与递归','指针·引用·结构体','STL标准库'] },
+  { phase:'第三阶段：数据结构与算法', days:'约 10 天', items:['基本数据结构(栈/队列/树/图)','排序与查找','搜索与回溯(DFS/BFS)','贪心·分治·递推','动态规划','图论基础','数学进阶'] },
+  { phase:'第四阶段：题型实战与模考', days:'约 4 天', items:['阅读程序题专项训练','完善程序题专项训练','近3年真题模拟','查漏补缺+时间分配策略'] },
+];
+
+// ============================================================
+//  DATA: QUIZ
+// ============================================================
+const quizData = [
+  { q:'在冯·诺依曼体系结构中，计算机由哪五部分组成？', options:['运算器、控制器、存储器、输入设备、输出设备','CPU、内存、硬盘、显示器、键盘','控制器、运算器、Cache、内存、外存','中央处理器、主板、内存、硬盘、电源'], answer:0, explain:'冯·诺依曼体系的五大部件：运算器、控制器、存储器、输入设备、输出设备。' },
+  { q:'计算机中 -5 的补码表示是什么（假设使用 8 位二进制）？', options:['00000101','10000101','11111010','11111011'], answer:3, explain:'-5原码=10000101，反码=11111010，补码=11111011。补码=反码+1。' },
+  { q:'以下哪个是 IPv4 私有地址范围？', options:['1.0.0.0 ~ 127.255.255.255','192.168.0.0 ~ 192.168.255.255','8.8.8.0 ~ 8.8.8.255','0.0.0.0 ~ 255.255.255.255'], answer:1, explain:'常见私有地址：10.x.x.x, 172.16~31.x.x, 192.168.x.x。' },
+  { q:'二进制数 1101 转换为十进制是？', options:['11','13','15','9'], answer:1, explain:'1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 8+4+0+1 = 13。' },
+  { q:'异或运算 (XOR) 的规则是？', options:['全1才1','有1就1','相同为0，不同为1','取反'], answer:2, explain:'异或(XOR)：两个位相同结果为0，不同结果为1。' },
+  { q:'在一棵完全二叉树中，如果共有 1023 个节点，那么叶子节点有多少个？', options:['511','512','1023','256'], answer:1, explain:'完全二叉树中，叶子节点数 = ⌈n/2⌉ = 1023÷2向上取整 = 512个。' },
+  { q:'快速排序的平均时间复杂度是？', options:['O(n)','O(n log n)','O(n²)','O(log n)'], answer:1, explain:'快速排序平均O(n log n)，最坏O(n²)（如已有序且选首元素为基准），通过随机化可避免最坏情况。' },
+  { q:'Dijkstra 算法不能处理以下哪种情况？', options:['有向图','无向图','带负权边的图','非连通图'], answer:2, explain:'Dijkstra 算法要求边权非负。有负权边时用 Bellman-Ford 或 SPFA 算法。' },
+  { q:'在 C++ 中，以下哪个不是合法的变量名？', options:['_value','int2','2num','my_var'], answer:2, explain:'变量名不能以数字开头。_value、int2(不是关键字int)、my_var都合法。' },
+  { q:'在 C++ 中，假设 int a=5, b=2; 则 a/b 的结果是？', options:['2.5','2','2.0','编译错误'], answer:1, explain:'整型除法会截断小数部分，5/2=2（不是2.5）。要得到浮点结果需a/(double)b。' },
+  { q:'以下排序算法中，哪一个是稳定的？', options:['快速排序','选择排序','堆排序','归并排序'], answer:3, explain:'归并排序是稳定的。快速、选择、堆排序都不稳定。' },
+  { q:'表达式 (¬A ∧ B) ∨ (A ∧ ¬B) 等价于？', options:['A ∧ B','¬A ∧ ¬B','A ⊕ B','A ∨ B'], answer:2, explain:'这是一个标准的"异或"表达式：一个为真一个为假时结果为真，即 A⊕B。' },
+  { q:'在 TCP/IP 模型中，HTTP 协议属于哪一层？', options:['网络接口层','网际层','传输层','应用层'], answer:3, explain:'HTTP是应用层协议（在TCP/IP四层模型的最上层）。' },
+  { q:'一棵有 n 个节点的二叉树，其最小高度（深度）是？(根的高度为1)', options:['n','n/2','⌊log₂n⌋+1','⌈log₂(n+1)⌉'], answer:3, explain:'完全二叉树时高度最小。n个节点的完全二叉树高度为⌈log₂(n+1)⌉或⌊log₂n⌋+1。' },
+  { q:'栈 (Stack) 的特点是？', options:['先进先出','先进后出','随机访问','按优先级出'], answer:1, explain:'栈是后进先出(LIFO)，队列是先进先出(FIFO)，优先队列按优先级出。' },
+];
+
+// ============================================================
+//  RENDER: MODULES
+// ============================================================
+function renderModules() {
+  const grid = document.getElementById('moduleGrid');
+  grid.innerHTML = modules.map(m => {
+    const done = state.modules.includes(m.id);
+    return `<div class="card module-card ${done?'done':''}" data-id="${m.id}" onclick="toggleModule('${m.id}')">
+      <div class="module-num">${m.num}</div>
+      <h3>${m.name}</h3>
+      <p>${m.desc}</p>
+      <span class="days">📅 ${m.days} 天</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleModule(id) {
+  const idx = state.modules.indexOf(id);
+  if (idx === -1) state.modules.push(id);
+  else state.modules.splice(idx, 1);
+  localStorage.setItem('r1-modules', JSON.stringify(state.modules));
+  renderModules();
+  renderProgress();
+}
+
+// ============================================================
+//  RENDER: TABS (按阶段分类)
+// ============================================================
+const phases = [
+  { id:'overview', label:'📋 全部模块' },
+  { id:'phase1',  label:'🌱 基础扫盲' },
+  { id:'phase2',  label:'⚡ 核心突破' },
+  { id:'phase3',  label:'🎯 题型实战' },
+];
+
+function renderTabs() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = phases.map(p =>
+    `<button class="tab-btn ${state.activeTab===p.id?'active':''}" onclick="switchTab('${p.id}')">${p.label}</button>`
+  ).join('');
+  renderTabContent();
+}
+
+function switchTab(id) {
+  state.activeTab = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.id===id));
+  renderTabs();
+  renderTabContent();
+}
+
+function renderTabContent() {
+  const container = document.getElementById('tabContent');
+  let filtered;
+  if (state.activeTab === 'overview') filtered = modules;
+  else if (state.activeTab === 'phase1') filtered = modules.filter(m => m.phase === '基础扫盲');
+  else if (state.activeTab === 'phase2') filtered = modules.filter(m => m.phase === '核心突破');
+  else filtered = modules.filter(m => m.phase === '题型实战');
+
+  container.innerHTML = `<div class="grid-3">${filtered.map(m => {
+    const kps = knowledgePoints[m.id] || [];
+    const done = state.modules.includes(m.id);
+    return `<div class="card" style="cursor:pointer;${done?'border-left:4px solid #2ea043':''}" onclick="scrollToAnchor('${m.id}')">
+      <h3 style="color:var(--heading);font-size:1rem;margin-bottom:4px">${m.num}. ${m.name} ${done?'✅':''}</h3>
+      <p style="font-size:.85rem;color:var(--text);opacity:.7">${kps.length} 个知识点 · ${m.days} 天</p>
+      <p style="font-size:.8rem;color:var(--text);opacity:.6;margin-top:4px">${m.desc}</p>
+    </div>`;
+  }).join('')}</div>`;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无该阶段的模块</div>';
+  }
+}
+
+// ============================================================
+//  RENDER: ROADMAP
+// ============================================================
+function renderRoadmap() {
+  const tl = document.getElementById('roadmapTimeline');
+  tl.innerHTML = roadmapData.map(p => `
+    <div class="timeline-item">
+      <h4>${p.phase} <span style="color:var(--accent2);font-weight:400">${p.days}</span></h4>
+      <p>${p.items.join(' → ')}</p>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+//  RENDER: ACCORDIONS
+// ============================================================
+function renderAllAccordions() {
+  const sections = [
+    { id:'computerAccordion', kps:[...knowledgePoints.m1, ...knowledgePoints.m2, ...knowledgePoints.m3, ...knowledgePoints.m4, ...knowledgePoints.m5, ...knowledgePoints.m6] },
+    { id:'mathAccordion', kps:knowledgePoints.m18 },
+    { id:'cppAccordion', kps:[...knowledgePoints.m7, ...knowledgePoints.m8, ...knowledgePoints.m9, ...knowledgePoints.m10, ...knowledgePoints.m11] },
+    { id:'dsalgoAccordion', kps:[...knowledgePoints.m12, ...knowledgePoints.m13, ...knowledgePoints.m14, ...knowledgePoints.m15, ...knowledgePoints.m16, ...knowledgePoints.m17] },
+    { id:'examStrategyAccordion', kps:knowledgePoints.m19 },
+  ];
+
+  sections.forEach(s => {
+    const el = document.getElementById(s.id);
+    if (!el) return;
+    // Group by first tag
+    const groups = {};
+    s.kps.forEach(kp => {
+      const key = kp.tags[0] || '一般';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(kp);
+    });
+    el.innerHTML = Object.entries(groups).map(([tag, items]) => `
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>${tagIcon(tag)} ${tag}（${items.length}）</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="accordion-body">
+          ${items.map(kp => `
+            <div class="kp-card">
+              <h4>${kp.title} ${kp.tags.map(t => `<span class="tag ${tagColor(t)}">${t}</span>`).join('')}</h4>
+              <p>${kp.desc}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+    // open first
+    const first = el.querySelector('.accordion');
+    if (first) first.classList.add('open');
+  });
+}
+
+function tagIcon(tag) {
+  const m = { '核心':'🔴', '必考':'⭐', '基础':'📌', '进阶':'🚀', '策略':'💡', '技巧':'🔧', '常识':'💡', '人物':'👤', '拓展':'📖', '一般':'📋', '熟悉':'📖' };
+  return m[tag] || '📌';
+}
+
+function tagColor(tag) {
+  const m = { '核心':'red', '必考':'red', '基础':'blue', '进阶':'orange', '策略':'green', '技巧':'blue', '常识':'green', '人物':'blue', '拓展':'orange', '熟悉':'green' };
+  return m[tag] || 'blue';
+}
+
+function toggleAccordion(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ============================================================
+//  RENDER: QUIZ
+// ============================================================
+function renderQuiz() {
+  const area = document.getElementById('quizArea');
+  const answered = state.quiz;
+
+  let html = '';
+  quizData.forEach((item, i) => {
+    const sel = answered[i];
+    html += `<div class="card" style="margin-bottom:14px" data-quiz="${i}">
+      <p style="font-weight:600;margin-bottom:10px;color:var(--heading);font-size:.95rem">
+        Q${i+1}. ${escapeHtml(item.q)}
+      </p>`;
+    item.options.forEach((opt, oi) => {
+      const cls = sel !== undefined ? (oi === item.answer ? 'correct' : (oi === sel ? 'wrong' : '')) : '';
+      html += `<label class="quiz-option ${cls}">
+        <input type="radio" name="r1q${i}" value="${oi}" ${sel!==undefined?'disabled':''} onchange="submitQuiz(${i},${oi})">
+        ${escapeHtml(opt)}
+      </label>`;
+    });
+    if (sel !== undefined) {
+      html += `<div class="quiz-result show ${sel===item.answer?'pass':'fail'}">
+        ${sel===item.answer?'✅ 正确！':'❌ 错误。'} ${item.explain}
+      </div>`;
+    }
+    html += '</div>';
+  });
+
+  const correct = Object.entries(answered).filter(([k,v]) => quizData[parseInt(k)]?.answer === v).length;
+  const total = Object.keys(answered).length;
+  html += `<div class="card" style="text-align:center">
+    <h3 style="color:var(--heading)">📊 答题统计</h3>
+    <p style="margin:8px 0;font-size:1.1rem"><strong style="color:var(--accent)">${correct}</strong> / ${quizData.length} 正确（已答 ${total} 题）</p>
+    ${total===quizData.length?`<p style="color:var(--good);font-weight:600">🎉 全部完成！</p>`:''}
+    <button class="quiz-btn" onclick="resetQuiz()" style="background:var(--border);color:var(--text);margin-top:6px">🔄 重置</button>
+  </div>`;
+  area.innerHTML = html;
+  document.getElementById('quizCount').textContent = quizData.length;
+}
+
+function submitQuiz(qIdx, optIdx) {
+  state.quiz[qIdx] = optIdx;
+  localStorage.setItem('r1-quiz', JSON.stringify(state.quiz));
+  renderQuiz();
+}
+
+function resetQuiz() {
+  if (!confirm('重置所有答题记录？')) return;
+  state.quiz = {};
+  localStorage.removeItem('r1-quiz');
+  renderQuiz();
+}
+
+// ============================================================
+//  PROGRESS
+// ============================================================
+function renderProgress() {
+  const total = modules.length;
+  const done = state.modules.length;
+  const pct = Math.round(done / total * 100);
+
+  const ring = document.getElementById('progressRing');
+  ring.style.background = `conic-gradient(var(--accent) ${pct*3.6}deg, var(--border) ${pct*3.6}deg)`;
+  document.getElementById('progressPercent').textContent = `${pct}%`;
+
+  const container = document.getElementById('doneModules');
+  if (done === 0) {
+    container.innerHTML = '<div style="opacity:.6">还没有完成任何模块，点击模块卡片可标记完成 ✅</div>';
+  } else {
+    container.innerHTML = modules.filter(m => state.modules.includes(m.id))
+      .map(m => `<span style="display:inline-block;background:var(--border);padding:4px 12px;border-radius:16px;margin:4px 6px 4px 0;font-size:.85rem">✅ ${m.name}</span>`)
+      .join('');
+  }
+}
+
+function resetProgress() {
+  if (!confirm('确定重置所有模块进度？')) return;
+  state.modules = [];
+  localStorage.setItem('r1-modules', JSON.stringify(state.modules));
+  renderModules();
+  renderProgress();
+}
+
+// ============================================================
+//  UTILITIES
+// ============================================================
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function scrollToAnchor(id) {
+  const target = document.getElementById(id) || document.querySelector('[data-anchor="'+id+'"]');
+  if (target) {
+    const top = target.getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo({top, behavior:'smooth'});
+  }
+}
+
+// Back to top
+window.addEventListener('scroll', () => {
+  document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
+});
+
+// Copy code
+function copyCode(btn) {
+  const pre = btn.parentElement.querySelector('pre');
+  if (!pre) return;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = '✓ 已复制';
+    setTimeout(() => btn.textContent = '复制', 1500);
+  });
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+document.getElementById('kpCount').textContent = allKPs.length;
+document.getElementById('moduleCount').textContent = modules.length;
+
+renderModules();
+renderTabs();
+renderRoadmap();
+renderAllAccordions();
+renderQuiz();
+renderProgress();
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    scrollToAnchor(id);
+  });
+});
+</script>
+</body>
+</html>
